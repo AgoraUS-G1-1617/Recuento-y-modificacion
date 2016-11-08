@@ -3,6 +3,13 @@ Este proyecto corresponde al módulo de Recuento y Modificación de votos de Ago
 
 El [proyecto del año anterior](https://github.com/AgoraUS1516/G01) de este mismo módulo presentaba graves deficiencias: no tenía integración con ningún otro módulo y la interfaz de usuario no funcionaba adecuadamente mostrando Panics. Por tanto, se va a rehacer en NodeJS, ya que es un lenguaje que ayuda a la simplificación y modularización de los componentes internos del módulo.
 
+# Miembros del equipo
+- Agustín Borrego Díaz
+- David de los Santos Boix
+- Rafael García Domínguez
+- Manuel Tejero Vela
+- Jesús Enrique Bozada Márquez
+
 # Organización del repositorio
 Existen dos ramas principales, "development" y "master". Sobre la rama *development* se efectuarán todos los cambios durante el desarrollo de la aplicación, y eventualmente se crearán ramas sobre ésta para implementar funcionalidades si se considerase necesario. La rama *master* contendrá sólo versiones que se consideren estables, y por lo tanto es la que debería ser usada por los demás equipos para realizar la integración.
 
@@ -18,15 +25,8 @@ La estructura interna del módulo está sujeta a cambios, pero en este momento e
 # Funcionamiento
 Los componentes se comunican internamente usando los métodos provistos para ello en NodeJS. Cada componente es un módulo, que realiza importaciones (*require*) de los demás módulos internos que necesite y emplea los métodos que expone públicamente.
 
-# Dependencias
-En este apartado se irán añadiendo las dependencias que tenga nuestros proyecto con otros módulos de NodeJS.
-
-Actualmente son las siguientes:
-- express
-
-Para instalar rápida y facilmente todos estos módulos, basta con usar el gestor de paquetes de Node, *npm*. Así, es tan simple como navegar con nuestra consola al directorio donde se encuentre el proyecto y ejecutar el comando
-
-`npm install express`
+# Instalación
+*Por determinar*
 
 # Peticiones a la API Rest
 *Por determinar*
