@@ -1,0 +1,31 @@
+{
+  "name": "recuento-y-modificacion",
+  "version": "1.0.0",
+  "description": "Módulo de recuento y modificación para Agora@US, curso 2016/17",
+  "main": "WebServer.js",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AgoraUS-G1-1617/Recuento-y-modificacion.git"
+  },
+  "keywords": [
+    "agora",
+    "agoraus",
+    "us",
+    "recuento",
+    "modificacion"
+  ],
+  "author": "Varios",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/AgoraUS-G1-1617/Recuento-y-modificacion/issues"
+  },
+  "homepage": "https://github.com/AgoraUS-G1-1617/Recuento-y-modificacion#readme"
+}
