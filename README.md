@@ -26,7 +26,7 @@ La estructura interna del módulo está sujeta a cambios, pero en este momento e
 Los componentes se comunican internamente usando los métodos provistos para ello en NodeJS. Cada componente es un módulo, que realiza importaciones (*require*) de los demás módulos internos que necesite y emplea los métodos que expone públicamente.
 
 # Instalación
-*Por determinar
+*Por determinar*
 
 # Peticiones a la API Rest
 *Por determinar*
