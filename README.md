@@ -29,4 +29,31 @@ Los componentes se comunican internamente usando los métodos provistos para ell
 *Por determinar*
 
 # Peticiones a la API Rest
-*Por determinar*
+URL Base: *Por determinar.*
+
+### Códigos de estado HTTP
+- **200 (OK)**: Petición atendida con éxito
+- **400 (BAD REQUEST)**: No se ha proporcionado algún parámetro obligatorio o los parámetros no son válidos.
+- **403 (FORBIDDEN)**: El usuario identificado por el token no existe o no tiene permiso para realizar la operación.
+- **404 (NOT FOUND)**: El método de la API especificado no existe.
+- **500 (INTERNAL SERVER ERROR)**: Errores no controlados en el servidor.
+
+### Recontar Votación
+- URL: `(GET) /api/recontarVotacion`
+- Parámetros GET:
+    - **token**: Obligatorio. Token de sesión del usuario que solicita el recuento.
+    - **idVotacion**: Obligatorio. Identificador de la votación que se desea recontar.
+- Ejemplo de uso:
+    - Petición: `(GET) http://URL_BASE/api/recontarVotacion?token=1234abcde&idVotacion=288`
+    - Respuesta: 
+    `{"estado":"ok","opciones":[{"nombre":"Mariano Rajoy","votos":10},{"nombre":"Pdro Snchz","votos":9},{"nombre":"Pablo Iglesias","votos":8},{"nombre":"Albert Rivera","votos":7}]}`
+
+### Modificar votos
+- URL: `(GET) /api/modificarVotoUsuario`
+- Parámetros GET:
+    - **token**: Obligatorio. Token de sesión del usuario que solicita el cambio de su voto.
+    - **idVotacion**: Obligatorio. Identificador de la votación en la que se encuentra el voto a modificar.
+    - **nuevoVoto**: Obligatorio. Identificador de la opción a votar.
+- Ejemplo de uso:
+    - Petición: `(GET) http://URL_BASE/api/modificarVotoUsuario?token=1234abcde&idVotacion=288&nuevoVoto=3`
+    - Respuesta: *Por determinar*
