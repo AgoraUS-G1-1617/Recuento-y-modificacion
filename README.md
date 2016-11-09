@@ -26,7 +26,11 @@ La estructura interna del módulo está sujeta a cambios, pero en este momento e
 Los componentes se comunican internamente usando los métodos provistos para ello en NodeJS. Cada componente es un módulo, que realiza importaciones (*require*) de los demás módulos internos que necesite y emplea los métodos que expone públicamente.
 
 # Instalación
-*Por determinar*
+1. Instalar [Node.JS](https://nodejs.org/es/)
+2. Clonar el proyecto: `git clone https://github.com/AgoraUS-G1-1617/Recuento-y-modificacion.git`
+3. Navegar con la consola a la carpeta del proyecto: `cd Recuento-y-modificacion`
+4. Instalar las dependencias del proyecto: `npm install`
+5. Listo!
 
 # Peticiones a la API Rest
 URL Base: *Por determinar.*
