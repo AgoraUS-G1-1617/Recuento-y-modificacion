@@ -13,14 +13,17 @@ const HTTP_NOT_FOUND = 404;
 const HTTP_METHOD_NOT_ALLOWED = 405;
 const HTTP_SERVER_ERR = 500;
 
-//Usamos bodyparser en el servidor para poder extraer los json de las peticiones POST
 server.use(bodyparser.urlencoded({extended: true}));
 server.use(bodyparser.json());
 
 //Enrutador de peticiones para la API
 var router = express.Router();
 
-router.get("/api/recontarVotacion", (request, response) => {
+///////////////////////////////////////////////////////////////////////
+/////////////////////   MÉTODOS DE LA API /////////////////////////////
+///////////////////////////////////////////////////////////////////////
+
+router.route("/api/recontarVotacion").get((request, response) => {
 	try {
 		
 		if(!request.query.token) {
@@ -55,13 +58,9 @@ router.get("/api/recontarVotacion", (request, response) => {
 		console.log(err);
 		response.status(HTTP_SERVER_ERR).json({estado: HTTP_SERVER_ERR, mensaje: "Error interno del servidor"});
 	}
-});
+}).all(display405error);
 
-router.get("/api/modificarVoto", (request, response) => {
-	response.status(HTTP_METHOD_NOT_ALLOWED).end("Se debe usar POST en este metodo");
-});
-
-router.post("/api/modificarVoto", (request, response) => {
+router.route("/api/modificarVoto").post((request, response) => {
 	try {
 		
 		if(!request.query.token) {
@@ -91,13 +90,9 @@ router.post("/api/modificarVoto", (request, response) => {
 		console.log(err);
 		response.status(HTTP_SERVER_ERR).json({estado: HTTP_SERVER_ERR, mensaje: "Error interno del servidor"});
 	}
-});
+}).all(display405error);
 
-router.get("/api/eliminarVoto", (request, response) => {
-	response.status(HTTP_METHOD_NOT_ALLOWED).end("Se debe usar DELETE en este metodo");
-});
-
-router.delete("/api/eliminarVoto", (request, response) => {
+router.route("/api/eliminarVoto").delete((request, response) => {
 	try {
 		
 		if(!request.query.token) {
@@ -121,9 +116,25 @@ router.delete("/api/eliminarVoto", (request, response) => {
 		console.log(err);
 		response.status(HTTP_SERVER_ERR).json({estado: HTTP_SERVER_ERR, mensaje: "Error interno del servidor"});
 	}
-});
+}).all(display405error);
 
 server.use(router);
+
+//Para las restantes rutas no especificadas, usar el manejador de 404
+server.use(display404error);
+
 server.listen(port, () => {
 	console.log("Servidor iniciado en el puerto " + port);
 });
+
+///////////////////////////////////////////////////////////////////////
+/////////////////////   FUNCIONES AUXILIARES //////////////////////////
+///////////////////////////////////////////////////////////////////////
+
+function display405error(request, response) {
+	response.status(HTTP_METHOD_NOT_ALLOWED).json({estado: HTTP_METHOD_NOT_ALLOWED, mensaje: "Metodo HTTP no soportado"});
+}
+
+function display404error(request, response) {
+	response.status(HTTP_NOT_FOUND).json({estado: HTTP_NOT_FOUND, mensaje: "Metodo no encontrado"});
+}
