@@ -33,7 +33,8 @@ Los componentes se comunican internamente usando los métodos provistos para ell
 5. Ejecutar el módulo usando `node WebServer.js`
 
 # Peticiones a la API Rest
-###URL Base: *Por determinar*
+### URL base de rama estable (master): https://pqqqqw.pw/api/
+### URL base de rama de desarrollo (development): https://pqqqqw.pw/api-dev/
 
 ### Códigos de estado HTTP
 - **200 (OK)**: Petición atendida con éxito
@@ -47,30 +48,30 @@ Los componentes se comunican internamente usando los métodos provistos para ell
 Las respuestas incluyen un campo *estado* que indica el código de estado HTTP asociado, para mayor comodidad. Opcionalmente, también pueden incluir un campo *mensaje* que proporciona información sobre la operación.
 
 ### Recontar Votación
-- URL: `(GET) /api/recontarVotacion`
+- URL: `(GET) URL_BASE/recontarVotacion`
 - Parámetros:
     - **token**: Obligatorio. Token de sesión del usuario que solicita el recuento.
     - **idVotacion**: Obligatorio. Identificador de la votación que se desea recontar.
 - Ejemplo de uso:
-    - Petición: `(GET) http://URL_BASE/api/recontarVotacion?token=1234abcde&idVotacion=288`
+    - Petición: `(GET) http://URL_BASE/recontarVotacion?token=1234abcde&idVotacion=288`
     - Respuesta: 
     `{"estado":200,"opciones":[{"nombre":"Mariano Rajoy","votos":10},{"nombre":"Pdro Snchz","votos":9},{"nombre":"Pablo Iglesias","votos":8},{"nombre":"Albert Rivera","votos":7}]}`
 
 ### Modificar votos
-- URL: `(POST) /api/modificarVoto`
+- URL: `(POST) URL_BASE/modificarVoto`
 - Parámetros:
     - **token**: Obligatorio. Token de sesión del usuario que solicita el cambio de su voto.
     - **idVotacion**: Obligatorio. Identificador de la votación en la que se encuentra el voto a modificar.
     - **nuevoVoto**: Obligatorio. Identificador de la opción a votar.
 - Ejemplo de uso:
-    - Petición: `(POST) http://URL_BASE/api/modificarVoto?token=1234abcde&idVotacion=288&nuevoVoto=3`
+    - Petición: `(POST) http://URL_BASE/modificarVoto?token=1234abcde&idVotacion=288&nuevoVoto=3`
     - Respuesta: *Por determinar*
 
 ### Eliminar votos
-- URL: `(DELETE) /api/eliminarVoto`
+- URL: `(DELETE) URL_BASE/eliminarVoto`
 - Parámetros:
   - **token**: Obligatorio. Token de sesión del usuario que solicita la eliminación de su voto.
   - **idVotacion**: Obligatorio. Identificador de la votación en la que se encuentra el voto a eliminar.
 - Ejemplo de uso:
-    - Petición: `(DELETE) http://URL_BASE/api/eliminarVoto?token=1234abcde&idVotacion=288`
+    - Petición: `(DELETE) http://URL_BASE/eliminarVoto?token=1234abcde&idVotacion=288`
     - Respuesta: *Por determinar*
