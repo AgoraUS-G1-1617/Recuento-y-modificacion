@@ -6,8 +6,15 @@ var server = express();
 
 const port = 80;
 
+const HTTP_OK = 200;
+const HTTP_BAD_REQ = 400;
+const HTTP_FORBIDDEN = 403;
+const HTTP_NOT_FOUND = 404;
+const HTTP_METHOD_NOT_ALLOWED = 405;
+const HTTP_SERVER_ERR = 500;
+
 //Usamos bodyparser en el servidor para poder extraer los json de las peticiones POST
-server.use(bodyparser.urlencoded({ extended: true }));
+server.use(bodyparser.urlencoded({extended: true}));
 server.use(bodyparser.json());
 
 //Enrutador de peticiones para la API
@@ -17,12 +24,12 @@ router.get("/api/recontarVotacion", (request, response) => {
 	try {
 		
 		if(!request.query.token) {
-			response.status(400).json({estado: "error", mensaje: "no se ha proporcionado el token"});
+			response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "No se ha proporcionado el token"});
 			return;
 		}
 		
 		if(!request.query.idVotacion) {
-			response.status(400).json({estado: "error", mensaje: "no se ha proporcionado el ID de la votación"});
+			response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "No se ha proporcionado el ID de la votacion"});
 			return;
 		}
 		
@@ -35,7 +42,7 @@ router.get("/api/recontarVotacion", (request, response) => {
 		
 		//Respuesta de prueba
 		response.json({
-			estado: "ok",
+			estado: HTTP_OK,
 			opciones: [
 				{nombre: "Mariano Rajoy", votos: 10},
 				{nombre: "Pdro Snchz", votos: 9},
@@ -46,29 +53,29 @@ router.get("/api/recontarVotacion", (request, response) => {
 		
 	} catch(err) {
 		console.log(err);
-		response.status(500).json({estado: "error", mensaje: "error interno del servidor"});
+		response.status(HTTP_SERVER_ERR).json({estado: HTTP_SERVER_ERR, mensaje: "Error interno del servidor"});
 	}
 });
 
 router.get("/api/modificarVoto", (request, response) => {
-	response.status(405).end("Se debe usar POST en este metodo");
+	response.status(HTTP_METHOD_NOT_ALLOWED).end("Se debe usar POST en este metodo");
 });
 
 router.post("/api/modificarVoto", (request, response) => {
 	try {
 		
 		if(!request.query.token) {
-			response.status(400).json({estado: "error", mensaje: "no se ha proporcionado el token"});
+			response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "No se ha proporcionado el token"});
 			return;
 		}
 		
 		if(!request.query.idVotacion) {
-			response.status(400).json({estado: "error", mensaje: "no se ha proporcionado el ID de la votación"});
+			response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "No se ha proporcionado el ID de la votacion"});
 			return;
 		}
 		
 		if(!request.query.nuevoVoto) {
-			response.status(400).json({estado: "error", mensaje: "no se ha proporcionado el nuevo voto"});
+			response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "No se ha proporcionado el nuevo voto"});
 			return;
 		}
 		
@@ -78,28 +85,28 @@ router.post("/api/modificarVoto", (request, response) => {
 		
 		//Hacer todas las comprobaciones oportunas...
 		
-		response.json({estado: "ok", mensaje: "voto cambiado con éxito"});
+		response.json({estado: HTTP_OK, mensaje: "Voto modificado satisfactoriamente"});
 		
 	} catch(err) {
 		console.log(err);
-		response.status(500).json({estado: "error", mensaje: "error interno del servidor"});
+		response.status(HTTP_SERVER_ERR).json({estado: HTTP_SERVER_ERR, mensaje: "Error interno del servidor"});
 	}
 });
 
 router.get("/api/eliminarVoto", (request, response) => {
-	response.status(405).end("Se debe usar DELETE en este metodo");
+	response.status(HTTP_METHOD_NOT_ALLOWED).end("Se debe usar DELETE en este metodo");
 });
 
 router.delete("/api/eliminarVoto", (request, response) => {
 	try {
 		
 		if(!request.query.token) {
-			response.status(400).json({estado: "error", mensaje: "no se ha proporcionado el token"});
+			response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "No se ha proporcionado el token"});
 			return;
 		}
 		
 		if(!request.query.idVotacion) {
-			response.status(400).json({estado: "error", mensaje: "no se ha proporcionado el ID de la votación"});
+			response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "No se ha proporcionado el ID de la votacion"});
 			return;
 		}
 		
@@ -108,11 +115,11 @@ router.delete("/api/eliminarVoto", (request, response) => {
 		
 		//Hacer todas las comprobaciones y operaciones oportunas...
 		
-		response.json({estado: "ok", mensaje: "voto eliminado con éxito"});
+		response.json({estado: HTTP_OK, mensaje: "Voto eliminado satisfactoriamente"});
 		
 	} catch(err) {
 		console.log(err);
-		response.status(500).json({estado: "error", mensaje: "error interno del servidor"});
+		response.status(HTTP_SERVER_ERR).json({estado: HTTP_SERVER_ERR, mensaje: "Error interno del servidor"});
 	}
 });
 
