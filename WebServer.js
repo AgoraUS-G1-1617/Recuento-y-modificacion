@@ -50,7 +50,11 @@ router.get("/api/recontarVotacion", (request, response) => {
 	}
 });
 
-router.get("/api/modificarVotoUsuario", (request, response) => {
+router.get("/api/modificarVoto", (request, response) => {
+	response.status(405).end("Se debe usar POST en este metodo");
+});
+
+router.post("/api/modificarVoto", (request, response) => {
 	try {
 		
 		if(!request.query.token) {
@@ -75,6 +79,36 @@ router.get("/api/modificarVotoUsuario", (request, response) => {
 		//Hacer todas las comprobaciones oportunas...
 		
 		response.json({estado: "ok", mensaje: "voto cambiado con éxito"});
+		
+	} catch(err) {
+		console.log(err);
+		response.status(500).json({estado: "error", mensaje: "error interno del servidor"});
+	}
+});
+
+router.get("/api/eliminarVoto", (request, response) => {
+	response.status(405).end("Se debe usar DELETE en este metodo");
+});
+
+router.delete("/api/eliminarVoto", (request, response) => {
+	try {
+		
+		if(!request.query.token) {
+			response.status(400).json({estado: "error", mensaje: "no se ha proporcionado el token"});
+			return;
+		}
+		
+		if(!request.query.idVotacion) {
+			response.status(400).json({estado: "error", mensaje: "no se ha proporcionado el ID de la votación"});
+			return;
+		}
+		
+		var token = request.query.token;
+		var idVotacion = request.query.idVotacion;
+		
+		//Hacer todas las comprobaciones y operaciones oportunas...
+		
+		response.json({estado: "ok", mensaje: "voto eliminado con éxito"});
 		
 	} catch(err) {
 		console.log(err);
