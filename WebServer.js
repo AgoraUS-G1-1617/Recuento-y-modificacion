@@ -46,11 +46,23 @@ router.route("/api/recontarVotacion").get((request, response) => {
 		//Respuesta de prueba
 		response.json({
 			estado: HTTP_OK,
-			opciones: [
-				{nombre: "Mariano Rajoy", votos: 10},
-				{nombre: "Pdro Snchz", votos: 9},
-				{nombre: "Pablo Iglesias", votos: 8},
-				{nombre: "Albert Rivera", votos: 7}
+			preguntas: [
+				{id_pregunta: 0,
+				 titulo: "¿A quién va a votar en las próximas elecciones?",
+				 opciones: [
+					{id_respuesta: 0, nombre: "Mariano Rajoy", votos: 10},
+					{id_respuesta: 1, nombre: "Pdro Snchz", votos: 9},
+					{id_respuesta: 2, nombre: "Pablo Iglesias", votos: 8},
+					{id_respuesta: 3, nombre: "Albert Rivera", votos: 7}
+				]},
+				
+				{id_pregunta: 1,
+				 titulo: "¿Eres mayor de edad?",
+				 opciones: [
+					{id_respuesta: 0, nombre: "Sí", votos: 40},
+					{id_respuesta: 1, nombre: "No", votos: 30}
+				]},
+				
 			]
 		});
 		
@@ -73,6 +85,11 @@ router.route("/api/modificarVoto").post((request, response) => {
 			return;
 		}
 		
+		if(!request.query.idPregunta) {
+			response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "No se ha proporcionado el ID de la pregunta"});
+			return;
+		}
+		
 		if(!request.query.nuevoVoto) {
 			response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "No se ha proporcionado el nuevo voto"});
 			return;
@@ -80,6 +97,7 @@ router.route("/api/modificarVoto").post((request, response) => {
 		
 		var token = request.query.token;
 		var idVotacion = request.query.idVotacion;
+		var idPregunta = request.query.idPregunta;
 		var nuevoVoto = request.query.nuevoVoto;
 		
 		//Hacer todas las comprobaciones oportunas...
@@ -105,8 +123,14 @@ router.route("/api/eliminarVoto").delete((request, response) => {
 			return;
 		}
 		
+		if(!request.query.idPregunta) {
+			response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "No se ha proporcionado el ID de la pregunta"});
+			return;
+		}
+		
 		var token = request.query.token;
 		var idVotacion = request.query.idVotacion;
+		var idPregunta = request.query.idPregunta;
 		
 		//Hacer todas las comprobaciones y operaciones oportunas...
 		
