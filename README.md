@@ -33,8 +33,8 @@ Los componentes se comunican internamente usando los métodos provistos para ell
 5. Ejecutar el módulo usando `node WebServer.js`
 
 # Peticiones a la API Rest
-### URL base de rama estable (master): https://pqqqqw.pw/api/
-### URL base de rama de desarrollo (development): https://pqqqqw.pw/api-dev/
+### URL base de rama estable (master): *Por determinar*
+### URL base de rama de desarrollo (development): *Por determinar*
 
 ### Códigos de estado HTTP
 - **200 (OK)**: Petición atendida con éxito
@@ -55,16 +55,17 @@ Las respuestas incluyen un campo *estado* que indica el código de estado HTTP a
 - Ejemplo de uso:
     - Petición: `(GET) http://URL_BASE/recontarVotacion?token=1234abcde&idVotacion=288`
     - Respuesta: 
-    `{"estado":200,"opciones":[{"nombre":"Mariano Rajoy","votos":10},{"nombre":"Pdro Snchz","votos":9},{"nombre":"Pablo Iglesias","votos":8},{"nombre":"Albert Rivera","votos":7}]}`
+    `{"estado":200,"preguntas":[{"id_pregunta":0,"titulo":"¿A quién va a votar en las próximas elecciones?","opciones":[{"id_respuesta":0,"nombre":"Mariano Rajoy","votos":10},{"id_respuesta":1,"nombre":"Pdro Snchz","votos":9},{"id_respuesta":2,"nombre":"Pablo Iglesias","votos":8},{"id_respuesta":3,"nombre":"Albert Rivera","votos":7}]},{"id_pregunta":1,"titulo":"¿Eres mayor de edad?","opciones":[{"id_respuesta":0,"nombre":"Sí","votos":40},{"id_respuesta":1,"nombre":"No","votos":30}]}]}`
 
 ### Modificar votos
 - URL: `(POST) URL_BASE/modificarVoto`
 - Parámetros:
     - **token**: Obligatorio. Token de sesión del usuario que solicita el cambio de su voto.
     - **idVotacion**: Obligatorio. Identificador de la votación en la que se encuentra el voto a modificar.
+	- **idPregunta**: Obligatorio. Identificador de la pregunta dentro de la votación en la que se encuentra el voto a modificar.
     - **nuevoVoto**: Obligatorio. Identificador de la opción a votar.
 - Ejemplo de uso:
-    - Petición: `(POST) http://URL_BASE/modificarVoto?token=1234abcde&idVotacion=288&nuevoVoto=3`
+    - Petición: `(POST) http://URL_BASE/modificarVoto?token=1234abcde&idVotacion=288&idPregunta=2&nuevoVoto=3`
     - Respuesta: *Por determinar*
 
 ### Eliminar votos
@@ -72,6 +73,7 @@ Las respuestas incluyen un campo *estado* que indica el código de estado HTTP a
 - Parámetros:
   - **token**: Obligatorio. Token de sesión del usuario que solicita la eliminación de su voto.
   - **idVotacion**: Obligatorio. Identificador de la votación en la que se encuentra el voto a eliminar.
+  - **idPregunta**: Obligatorio. Identificador de la pregunta dentro de la votación en la que se encuentra el voto a modificar.
 - Ejemplo de uso:
-    - Petición: `(DELETE) http://URL_BASE/eliminarVoto?token=1234abcde&idVotacion=288`
+    - Petición: `(DELETE) http://URL_BASE/eliminarVoto?token=1234abcde&idVotacion=288&idPregunta=2`
     - Respuesta: *Por determinar*
