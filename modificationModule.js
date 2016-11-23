@@ -39,19 +39,22 @@ var checkSurvey = function(votingToken){
 	var surveys = db('db/votings.json');
 	console.log("fin lectura base de datos");
 	survey = null;
+		
 	surveys.findOne({VotingToken: votingToken}).then(function(data){
 		survey = data;
+		if(Date.parse(survey.CloseDate) > now.getDate()){
+			surveyState = true;
+
+		}else{
+			surveyState = false;
+		};
+		
+		console.log("Estado encuesta: "+surveyState);
 	});
 	
-	if(Date.parse(survey.CloseDate) > now.getDate()){
-		surveyState = true;
-		
-	}else{
-		surveyState = false;
-	};
-	
-	return surveyState;
 };
+
+console.log(checkSurvey("BBB222"));
 
 //Modificacion del voto
 /*
