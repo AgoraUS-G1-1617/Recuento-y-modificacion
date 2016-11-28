@@ -54,8 +54,6 @@ var checkSurvey = function(votingToken){
 	
 };
 
-console.log(checkSurvey("BBB222"));
-
 //Modificacion del voto
 /*
 *Necesario encuesta, token de voto y token de opción de voto
@@ -127,4 +125,25 @@ var init = function(){
 	checkPermissions(authenticationToken);
 	checkSurvey(surveyToken);
 }
+
+//***************************
+//Testing********************
+//***************************
+
+//Test: comprobación de permisos
+var checkPermissionsTest = function(){
+	console.log("************ CHECK PERMISSIONS TEST (POSITIVE) *******************");
+	var authToken={vote:''};
+	authToken.vote = true;
+	console.log("Test positivo: el acceso a la funcionalidad de modificación está disponible");
+	checkPermissions(authToken);
+	console.log("Resultado comprobación de permisos de modificación: " + permissions.voteModif); 
+};
+
+checkPermissionsTest();
+		
+		
+		
+		
+		
 		
