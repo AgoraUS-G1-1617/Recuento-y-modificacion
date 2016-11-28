@@ -76,30 +76,37 @@ var processDate = function(surveyDate){
 *
 *return: modificación del voto indicado
 */
-var changeVote = function(survey, voterToken, optionToken){
+var changeVote = function(votingToken, voterToken, optionToken){
 	console.log("iniciando modificación de votos");
 	var foundOption = null;
-	var finalVote = null;
 	var deleteVote = null;
 	
 	if(permissions.voteModif == true && surveyState){
 		var votingOptions = db('db/votingOptions.json')
 		console.log("comprobando existencia de opción");
-		foundOption = votingOptions.findOne({VotingToken: survey.VotingToken, OptionToken: optionToken});
-		
-		if(foundOption != null){
-			console.log("verificación de opción completada");
-			var votes = db('db/votes.json');
-			deleteVote = votes.findOne({VotingToken: survey.VotingToken, VoterToken: voterToken});
-			console.log("Realizando modificación de voto");
+		foundOption = votingOptions.findOne({VotingToken: votingToken, OptionToken: optionToken}).then(function(data){
+			if(data != null){
+				console.log("verificación de opción completada");
+				var votes = db('db/votes.json');
+				deleteVote = votes.findOne({VotingToken: votingToken, VoterToken: voterToken}).then(function(voteToRemove){
+					console.log("Realizando modificación de voto");
+					//Accediendo a DB
+					console.log("Id del voto a modificar: "+voteToRemove._id);
+					votes.remove({_id: voteToRemove._id}).then(function(removed){
+						console.log(removed._id)
+						var month = now.getMonth() +1;
+						var insertDate = now.getDate() + "/" + month + "/" + now.getFullYear();
+						votes.insert({VotingToken: votingToken, VoterToken: voterToken, OptionToken: data.OptionToken, VoteDate: insertDate}).then(function(insertedVote){
+						console.log("Voto insertado: "+insertedVote); 
+						});
+					});
+				});
 			
-			//Accediendo a DB
-			votes.remove({VotingToken: deleteVote.VotingToken, VoterToken: voterToken});
-			insertLine(votes, {VotingToken: deleteVote.VotingToken, VoterToken: voterToken, OptionToken: foundOption, VoteDate: now});
-		}else{
-			errorMessage += "Opción no encontrada, no es posible modificar el voto\n\n";
-			console.log("Opción no encontrada");
-		};
+			}else{
+				errorMessage += "Opción no encontrada, no es posible modificar el voto\n\n";
+				console.log("Opción no encontrada");
+			};
+		});
 		
 	}else{
 		console.log("Sin permisos de modificación de voto");
@@ -194,4 +201,21 @@ var checkSurveyTestNegative = function(){
 
 setTimeout(function(){
 checkSurveyTestNegative()}, 500);
+
+//Test: cambiar voto
+var changeVoteTestPositive = function(){
+	console.log("\n")
+	console.log("************ CHANGE VOTE (POSITIVE) *******************");
+	var votingToken = "BBB111";
+	var voterToken = "AAA111";
+	var optionToken = "CCC222";
+	permissions.voteModif = true
+	surveyState = true;
+	console.log("Test positivo: se permite y se completa la modificación del voto");
+	changeVote(votingToken, voterToken, optionToken);
+	
+};
+
+setTimeout(function(){
+changeVoteTestPositive()}, 1000);
 		
