@@ -7,8 +7,7 @@ var survey;
 
 //Variable de permisos
 var permissions = {
-	voteModif: null,
-	surveyModif: null
+	voteModif: null
 };
 
 //Comprobando permisos de acceso
@@ -20,11 +19,10 @@ var checkPermissions = function(authToken){
 	
 	if(authToken.vote){
 		permissions.voteModif = true;
+	}else{
+		permissions.voteModif = false;
 	};
-	
-	if(authToken.survey){
-		permissions.surveyModif = true;
-	};
+
 };
 
 //Comprobando integridad de la encuesta
@@ -131,18 +129,30 @@ var init = function(){
 //***************************
 
 //Test: comprobación de permisos
-var checkPermissionsTest = function(){
+var checkPermissionsTestPositive = function(){
 	console.log("************ CHECK PERMISSIONS TEST (POSITIVE) *******************");
-	var authToken={vote:''};
+	var authToken = null;
+	authToken={vote:''};
 	authToken.vote = true;
 	console.log("Test positivo: el acceso a la funcionalidad de modificación está disponible");
 	checkPermissions(authToken);
 	console.log("Resultado comprobación de permisos de modificación: " + permissions.voteModif); 
 };
 
-checkPermissionsTest();
-		
-		
+checkPermissionsTestPositive();
+
+//Test: comprobación de permisos
+var checkPermissionsTestNegative = function(){
+	console.log("************ CHECK PERMISSIONS TEST (NEGATIVE) *******************");
+	var authToken = null;
+	authToken={vote:''};
+	authToken.vote = false;
+	console.log("Test negativo: el acceso a la funcionalidad de modificación no está disponible");
+	checkPermissions(authToken);
+	console.log("Resultado comprobación de permisos de modificación: " + permissions.voteModif); 
+};
+console.log("\n")
+checkPermissionsTestNegative();
 		
 		
 		
