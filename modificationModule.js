@@ -40,7 +40,9 @@ var checkSurvey = function(votingToken){
 		
 	surveys.findOne({VotingToken: votingToken}).then(function(data){
 		survey = data;
-		if(Date.parse(survey.CloseDate) > now.getDate()){
+		var surveyDate = processDate(survey.CloseDate);
+
+		if(surveyDate > now){
 			surveyState = true;
 
 		}else{
@@ -50,6 +52,22 @@ var checkSurvey = function(votingToken){
 		console.log("Estado encuesta: "+surveyState);
 	});
 	
+};
+
+//Procesing dates
+/*
+*Realiza el parseo de fechas (string -> date) para su comparación
+*
+*return: type Date
+*/
+var processDate = function(surveyDate){
+	var splitter = surveyDate.split("/");
+	result = new Date(splitter[2] + "-" + splitter[1] + "-" + splitter[0]);
+		
+	if(!result){
+		console.log("No se ha introducido una fecha válida");
+	}
+	return result;
 };
 
 //Modificacion del voto
@@ -153,7 +171,27 @@ var checkPermissionsTestNegative = function(){
 };
 console.log("\n")
 checkPermissionsTestNegative();
-		
-		
-		
+
+
+//Test: comprobación de encuesta
+var checkSurveyTestPositive = function(){
+	console.log("************ CHECK SURVEY STATE (POSITIVE) *******************");
+	var votingToken = "BBB111";
+	console.log("Test positivo: la encuesta está disponible y permite modificación de voto");
+	checkSurvey(votingToken);
+};
+console.log("\n")
+checkSurveyTestPositive();
+
+//Test: comprobación de encuesta
+var checkSurveyTestNegative = function(){
+	console.log("\n")
+	console.log("************ CHECK SURVEY STATE (NEGATIVE) *******************");
+	var votingToken = "BBB222";
+	console.log("Test negativo: la encuesta ha concluido y no permite modificación de voto");
+	checkSurvey(votingToken);
+};
+
+setTimeout(function(){
+checkSurveyTestNegative()}, 500);
 		
