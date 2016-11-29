@@ -14,7 +14,7 @@
   "devDependencies": {},
   "scripts": {
     "test": "node ./node_modules/mocha/bin/mocha",
-    "start": "supervisor WebServer.js"
+    "start": "node WebServer.js"
   },
   "repository": {
     "type": "git",
