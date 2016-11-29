@@ -4,7 +4,7 @@ var bodyparser = require("body-parser");
 //Creamos una instancia del servidor
 var server = express();
 
-const port = 80;
+const port = 8080;
 
 const HTTP_OK = 200;
 const HTTP_BAD_REQ = 400;
