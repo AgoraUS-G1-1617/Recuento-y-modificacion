@@ -75,30 +75,30 @@ router.route("/api/recontarVotacion").get((request, response) => {
 router.route("/api/modificarVoto").post((request, response) => {
 	try {
 		
-		if(!request.query.token) {
+		if(!request.body.token) {
 			response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "No se ha proporcionado el token"});
 			return;
 		}
 		
-		if(!request.query.idVotacion) {
+		if(!request.body.idVotacion) {
 			response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "No se ha proporcionado el ID de la votacion"});
 			return;
 		}
 		
-		if(!request.query.idPregunta) {
+		if(!request.body.idPregunta) {
 			response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "No se ha proporcionado el ID de la pregunta"});
 			return;
 		}
 		
-		if(!request.query.nuevoVoto) {
+		if(!request.body.nuevoVoto) {
 			response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "No se ha proporcionado el nuevo voto"});
 			return;
 		}
 		
-		var token = request.query.token;
-		var idVotacion = request.query.idVotacion;
-		var idPregunta = request.query.idPregunta;
-		var nuevoVoto = request.query.nuevoVoto;
+		var token = request.body.token;
+		var idVotacion = request.body.idVotacion;
+		var idPregunta = request.body.idPregunta;
+		var nuevoVoto = request.body.nuevoVoto;
 		
 		//Hacer todas las comprobaciones oportunas...
 		
@@ -113,24 +113,24 @@ router.route("/api/modificarVoto").post((request, response) => {
 router.route("/api/eliminarVoto").delete((request, response) => {
 	try {
 		
-		if(!request.query.token) {
+		if(!request.body.token) {
 			response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "No se ha proporcionado el token"});
 			return;
 		}
 		
-		if(!request.query.idVotacion) {
+		if(!request.body.idVotacion) {
 			response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "No se ha proporcionado el ID de la votacion"});
 			return;
 		}
 		
-		if(!request.query.idPregunta) {
+		if(!request.body.idPregunta) {
 			response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "No se ha proporcionado el ID de la pregunta"});
 			return;
 		}
 		
-		var token = request.query.token;
-		var idVotacion = request.query.idVotacion;
-		var idPregunta = request.query.idPregunta;
+		var token = request.body.token;
+		var idVotacion = request.body.idVotacion;
+		var idPregunta = request.body.idPregunta;
 		
 		//Hacer todas las comprobaciones y operaciones oportunas...
 		
