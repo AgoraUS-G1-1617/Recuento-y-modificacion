@@ -120,6 +120,7 @@ var changeVote = function(votingToken, voterToken, optionToken){
 *
 *return voto eliminado
 */
+
 var deleteVote = function(survey, voterToken){
 	console.log("iniciando borrado del voto");
 	var deleteVote = null;
@@ -148,6 +149,9 @@ var init = function(){
 	checkPermissions(authenticationToken);
 	checkSurvey(surveyToken);
 }
+
+exports.deleteVote = deleteVote;
+exports.changeVote = changeVote;
 
 //***************************
 //Testing********************

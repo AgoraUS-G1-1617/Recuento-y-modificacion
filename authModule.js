@@ -4,9 +4,6 @@ var db = require('node-localdb');
 
 var user = db('db/users.json');
 
-exports.getCredentials;
-
-
 /**
 * Esta función obtiene los datos relativos a un usuario, es decir, su rol
 * dado un UserToken específico
@@ -92,3 +89,5 @@ function checkOnlineCredentials(userToken, callback) {
         });
     });
 }
+
+exports.getCredentials = getCredentials;
