@@ -21,7 +21,6 @@ describe("Comprobación del módulo de Autenticación", function() {
     	it("Login de usuario AAA112", function() {
     		auth.getCredentials("AAA111").then(function(u){
     			expect(u).to.be.undefined
-
     		});
     	});
   	});
