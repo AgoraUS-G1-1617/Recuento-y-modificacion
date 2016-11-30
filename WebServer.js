@@ -1,6 +1,7 @@
 ﻿var express = require("express");
 var bodyparser = require("body-parser");
 var authModule = require("./authModule.js");
+var fs = require("fs");
 
 //Creamos una instancia del servidor
 var server = express();
@@ -25,11 +26,6 @@ var router = express.Router();
 router.route("/api/recontarVotacion").get((request, response) => {
 	try {
 		
-		if(!request.query.token) {
-			response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "No se ha proporcionado el token"});
-			return;
-		}
-		
 		if(!request.query.idVotacion) {
 			response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "No se ha proporcionado el ID de la votacion"});
 			return;
@@ -38,44 +34,29 @@ router.route("/api/recontarVotacion").get((request, response) => {
 		var token = request.query.token;
 		var idVotacion = request.query.idVotacion;
 		
-		//Comprobar con nuestro módulo de auth si el token es válido
-		authModule.getCredentials(token).then(data => {
-			
-			if(data === undefined) {
-				response.status(HTTP_FORBIDDEN).json({estado: HTTP_FORBIDDEN, mensaje: "El token no existe en el módulo de Autenticación ni en nuestra base de datos local"});
-				return;
-			} else {
-				if(data.UserToken != token) {
-					response.status(HTTP_FORBIDDEN).json({estado: HTTP_FORBIDDEN, mensaje: "El token devuelto por la consulta no coincide con el proporcionado como parámetro"});
-					return;
-				}
-				
-				//El usuario tiene permisos en este punto
-				//Hacer la petición al módulo que nos dé los votos de la encuesta y recontarlos
+		//Hacer la petición al módulo que nos dé los votos de la encuesta y recontarlos
 		
-				//Respuesta de prueba
-				response.json({
-					estado: HTTP_OK,
-					preguntas: [
-						{id_pregunta: 0,
-						 titulo: "¿A quién va a votar en las próximas elecciones?",
-						 opciones: [
-							{id_respuesta: 0, nombre: "Mariano Rajoy", votos: 10},
-							{id_respuesta: 1, nombre: "Pdro Snchz", votos: 9},
-							{id_respuesta: 2, nombre: "Pablo Iglesias", votos: 8},
-							{id_respuesta: 3, nombre: "Albert Rivera", votos: 7}
-						]},
-						
-						{id_pregunta: 1,
-						 titulo: "¿Eres mayor de edad?",
-						 opciones: [
-							{id_respuesta: 0, nombre: "Sí", votos: 40},
-							{id_respuesta: 1, nombre: "No", votos: 30}
-						]},
-					]
-				});	
-			}
-		});
+		//Respuesta de prueba
+		response.json({
+			estado: HTTP_OK,
+			preguntas: [
+				{id_pregunta: 0,
+				 titulo: "¿A quién va a votar en las próximas elecciones?",
+				 opciones: [
+					{id_respuesta: 0, nombre: "Mariano Rajoy", votos: 10},
+					{id_respuesta: 1, nombre: "Pdro Snchz", votos: 9},
+					{id_respuesta: 2, nombre: "Pablo Iglesias", votos: 8},
+					{id_respuesta: 3, nombre: "Albert Rivera", votos: 7}
+				]},
+				
+				{id_pregunta: 1,
+				 titulo: "¿Eres mayor de edad?",
+				 opciones: [
+					{id_respuesta: 0, nombre: "Sí", votos: 40},
+					{id_respuesta: 1, nombre: "No", votos: 30}
+				]},
+			]
+		});	
 		
 	} catch(err) {
 		console.log(err);
@@ -180,17 +161,33 @@ router.route("/api/eliminarVoto").delete((request, response) => {
 	}
 }).all(display405error);
 
+router.route("/api/clavePublica").get((request, response) => {
+	try {
+		
+		pubkey = fs.readFileSync("keypair/public.key", "utf-8");
+		response.status(HTTP_OK).end(pubkey);
+		
+	} catch(err) {
+		console.log(err);
+		response.status(HTTP_SERVER_ERR).json({estado: HTTP_SERVER_ERR, mensaje: "Error interno del servidor"});
+	}
+	
+}).all(display405error);
+
 ///////////////////////////////////////////////////////////////////////
-///////////////////// Mostrar formulario html /////////////////////////
+///////////////////// MOSTRAR FORMULARIO HTML /////////////////////////
 ///////////////////////////////////////////////////////////////////////
-server.use(express.static('./'));
+var options = {
+  index: "views/index.html"
+};
+server.use(express.static('./', options));
 server.use(router);
 
 //Para las restantes rutas no especificadas, usar el manejador de 404
 server.use(display404error);
 
 var port = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080,
-    ip_address   = process.env.IP   || process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0';
+    ip_address = process.env.IP || process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0';
 
 server.listen(port, ip_address, () => {
 	console.log("Servidor iniciado en el puerto " + port);

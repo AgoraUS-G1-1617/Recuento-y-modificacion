@@ -50,10 +50,9 @@ Las respuestas incluyen un campo *estado* que indica el código de estado HTTP a
 ### Recontar Votación
 - URL: `(GET) URL_BASE/recontarVotacion`
 - Parámetros:
-    - **token**: Obligatorio. Token de sesión del usuario que solicita el recuento.
     - **idVotacion**: Obligatorio. Identificador de la votación que se desea recontar.
 - Ejemplo de uso:
-    - Petición: `(GET) http://URL_BASE/recontarVotacion?token=1234abcde&idVotacion=288`
+    - Petición: `(GET) http://URL_BASE/recontarVotacion?idVotacion=288`
     - Respuesta: 
     `{"estado":200,"preguntas":[{"id_pregunta":0,"titulo":"¿A quién va a votar en las próximas elecciones?","opciones":[{"id_respuesta":0,"nombre":"Mariano Rajoy","votos":10},{"id_respuesta":1,"nombre":"Pdro Snchz","votos":9},{"id_respuesta":2,"nombre":"Pablo Iglesias","votos":8},{"id_respuesta":3,"nombre":"Albert Rivera","votos":7}]},{"id_pregunta":1,"titulo":"¿Eres mayor de edad?","opciones":[{"id_respuesta":0,"nombre":"Sí","votos":40},{"id_respuesta":1,"nombre":"No","votos":30}]}]}`
 
@@ -90,3 +89,29 @@ Las respuestas incluyen un campo *estado* que indica el código de estado HTTP a
 	idPregunta=2
 	```
     - Respuesta: `{"estado": 200,"mensaje": "Voto eliminado satisfactoriamente"}`
+
+### Obtención de clave pública
+####Devuelve la clave pública RSA para el encriptado de votos mediante el módulo de Verificación.
+- URL: `(GET) URL_BASE/clavePublica`
+- Parámetros: ninguno
+- Ejemplo de respuesta:
+```
+-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArzCJi1tsADcuCfDirZpJ
+w+OXm12yYlDbHGTufspJWBp/uVQw+9HlWskTz3Y9Dyd949i2smlR5HhhY1dwQ+Qp
+8z+MNvY5nzUKkgT1eRPpE0VFH9xzVYMQdZvUT64QVd0aXWyebTBXDgyFwHp0mbWA
+wyVWq6FIViJ6Nd5CXnOp3exTKsvXGKQrid3Q2jklR/JEx00O1TkZHYuM+HMiDjfC
+Ig6rPdYthN78C/AOB7isdUQQl1J5XGY/VT8NHtSvUurSpvyrgGcy9bTLjtA6zSxk
+UC6XAW9m7u8ln36NNUb9lBLbrkg6GpNoWIbRzzvtz/jysXfrOGb+TmQQUa+SwJfI
+YQIDAQAB
+-----END PUBLIC KEY-----
+```
+
+# Encriptado de votos
+Los votos emitidos en la cabina de votación deben ser encriptados antes de guardarse mediante el módulo de Almacenamiento, para que nadie sepa qué opción votó cada persona. Lógicamente, es el módulo de Recuento el que debe ser capaz de, llegado el momento de recontar una votación, desencriptar cada voto.
+
+En caso de que aún no exista, en el arranque se genera un par de claves RSA y se guardan en la carpeta keypair. La clave privada está añadida a .gitignore, de forma que nunca se sube al repositorio. Cada miembro del equipo tiene una copia en local de la misma, al igual que el servidor de integración continua. La clave pública es expuesta en la API, para que cualquiera pueda conocerla, en especial la cabina de votación.
+
+Nótese que la pérdida de la clave privada provocaría que se deba generar un par de claves nuevo y todos los votos que se hayan encriptado con la clave pública anterior serían irrecuperables.
+
+Las tareas de encriptado, desencriptado y generación de claves las realiza el módulo de Verificación, integrado en el nuestro en forma de .jar que usamos por línea de comandos.
