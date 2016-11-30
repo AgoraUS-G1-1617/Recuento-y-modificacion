@@ -1,5 +1,6 @@
 ﻿var express = require("express");
 var bodyparser = require("body-parser");
+var authModule = require("./authModule.js");
 
 //Creamos una instancia del servidor
 var server = express();
@@ -38,36 +39,49 @@ router.route("/api/recontarVotacion").get((request, response) => {
 		var idVotacion = request.query.idVotacion;
 		
 		//Comprobar con nuestro módulo de auth si el token es válido
-		
-		//Hacer la petición al módulo que nos dé los votos de la encuesta y recontarlos
-		
-		//Respuesta de prueba
-		response.json({
-			estado: HTTP_OK,
-			preguntas: [
-				{id_pregunta: 0,
-				 titulo: "¿A quién va a votar en las próximas elecciones?",
-				 opciones: [
-					{id_respuesta: 0, nombre: "Mariano Rajoy", votos: 10},
-					{id_respuesta: 1, nombre: "Pdro Snchz", votos: 9},
-					{id_respuesta: 2, nombre: "Pablo Iglesias", votos: 8},
-					{id_respuesta: 3, nombre: "Albert Rivera", votos: 7}
-				]},
+		authModule.getCredentials(token).then(data => {
+			
+			if(data === undefined) {
+				response.status(HTTP_FORBIDDEN).json({estado: HTTP_FORBIDDEN, mensaje: "El token no existe en el módulo de Autenticación ni en nuestra base de datos local"});
+				return;
+			} else {
+				if(data.UserToken != token) {
+					response.status(HTTP_FORBIDDEN).json({estado: HTTP_FORBIDDEN, mensaje: "El token devuelto por la consulta no coincide con el proporcionado como parámetro"});
+					return;
+				}
 				
-				{id_pregunta: 1,
-				 titulo: "¿Eres mayor de edad?",
-				 opciones: [
-					{id_respuesta: 0, nombre: "Sí", votos: 40},
-					{id_respuesta: 1, nombre: "No", votos: 30}
-				]},
-				
-			]
+				//El usuario tiene permisos en este punto
+				//Hacer la petición al módulo que nos dé los votos de la encuesta y recontarlos
+		
+				//Respuesta de prueba
+				response.json({
+					estado: HTTP_OK,
+					preguntas: [
+						{id_pregunta: 0,
+						 titulo: "¿A quién va a votar en las próximas elecciones?",
+						 opciones: [
+							{id_respuesta: 0, nombre: "Mariano Rajoy", votos: 10},
+							{id_respuesta: 1, nombre: "Pdro Snchz", votos: 9},
+							{id_respuesta: 2, nombre: "Pablo Iglesias", votos: 8},
+							{id_respuesta: 3, nombre: "Albert Rivera", votos: 7}
+						]},
+						
+						{id_pregunta: 1,
+						 titulo: "¿Eres mayor de edad?",
+						 opciones: [
+							{id_respuesta: 0, nombre: "Sí", votos: 40},
+							{id_respuesta: 1, nombre: "No", votos: 30}
+						]},
+					]
+				});	
+			}
 		});
 		
 	} catch(err) {
 		console.log(err);
 		response.status(HTTP_SERVER_ERR).json({estado: HTTP_SERVER_ERR, mensaje: "Error interno del servidor"});
 	}
+	
 }).all(display405error);
 
 router.route("/api/modificarVoto").post((request, response) => {
@@ -99,8 +113,21 @@ router.route("/api/modificarVoto").post((request, response) => {
 		var nuevoVoto = request.body.nuevoVoto;
 		
 		//Hacer todas las comprobaciones oportunas...
-		
-		response.json({estado: HTTP_OK, mensaje: "Voto modificado satisfactoriamente"});
+		authModule.getCredentials(token).then(data => {
+			
+			if(data === undefined) {
+				response.status(HTTP_FORBIDDEN).json({estado: HTTP_FORBIDDEN, mensaje: "El token no existe en el módulo de Autenticación ni en nuestra base de datos local"});
+				return;
+			} else {	
+				if(data.UserToken != token) {
+					response.status(HTTP_FORBIDDEN).json({estado: HTTP_FORBIDDEN, mensaje: "El token devuelto por la consulta no coincide con el proporcionado como parámetro"});
+					return;
+				}
+				
+				//El usuario tiene permisos en este punto.
+				response.json({estado: HTTP_OK, mensaje: "Voto modificado satisfactoriamente"});
+			}
+		});
 		
 	} catch(err) {
 		console.log(err);
@@ -131,8 +158,21 @@ router.route("/api/eliminarVoto").delete((request, response) => {
 		var idPregunta = request.body.idPregunta;
 		
 		//Hacer todas las comprobaciones y operaciones oportunas...
-		
-		response.json({estado: HTTP_OK, mensaje: "Voto eliminado satisfactoriamente"});
+		authModule.getCredentials(token).then(data => {
+			
+			if(data === undefined) {
+				response.status(HTTP_FORBIDDEN).json({estado: HTTP_FORBIDDEN, mensaje: "El token no existe en el módulo de Autenticación ni en nuestra base de datos local"});
+				return;
+			} else {	
+				if(data.UserToken != token) {
+					response.status(HTTP_FORBIDDEN).json({estado: HTTP_FORBIDDEN, mensaje: "El token devuelto por la consulta no coincide con el proporcionado como parámetro"});
+					return;
+				}
+				
+				//El usuario tiene permisos en este punto.
+				response.json({estado: HTTP_OK, mensaje: "Voto eliminado satisfactoriamente"});
+			}
+		});
 		
 	} catch(err) {
 		console.log(err);
@@ -144,8 +184,6 @@ router.route("/api/eliminarVoto").delete((request, response) => {
 ///////////////////// Mostrar formulario html /////////////////////////
 ///////////////////////////////////////////////////////////////////////
 server.use(express.static('./'));
-
-
 server.use(router);
 
 //Para las restantes rutas no especificadas, usar el manejador de 404
