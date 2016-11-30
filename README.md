@@ -30,7 +30,7 @@ Los componentes se comunican internamente usando los métodos provistos para ell
 2. Clonar el proyecto: `git clone https://github.com/AgoraUS-G1-1617/Recuento-y-modificacion.git`
 3. Navegar con la consola a la carpeta del proyecto: `cd Recuento-y-modificacion`
 4. Instalar las dependencias del proyecto: `npm install`
-5. Ejecutar el módulo usando `node WebServer.js`
+5. Ejecutar el módulo usando `npm start`
 
 # Peticiones a la API Rest
 ### URL base de rama estable (master): *Por determinar*
@@ -65,8 +65,15 @@ Las respuestas incluyen un campo *estado* que indica el código de estado HTTP a
 	- **idPregunta**: Obligatorio. Identificador de la pregunta dentro de la votación en la que se encuentra el voto a modificar.
     - **nuevoVoto**: Obligatorio. Identificador de la opción a votar.
 - Ejemplo de uso:
-    - Petición: `(POST) http://URL_BASE/modificarVoto?token=1234abcde&idVotacion=288&idPregunta=2&nuevoVoto=3`
-    - Respuesta: *Por determinar*
+    - Petición: `(POST) http://URL_BASE/modificarVoto`
+	- Cuerpo de la petición: 
+	```
+	token=AAA111
+	idVotacion=288
+	idPregunta=2
+	nuevoVoto=3
+	```
+    - Respuesta: `{"estado": 200,"mensaje": "Voto modificado satisfactoriamente"}`
 
 ### Eliminar votos
 - URL: `(DELETE) URL_BASE/eliminarVoto`
@@ -75,5 +82,11 @@ Las respuestas incluyen un campo *estado* que indica el código de estado HTTP a
   - **idVotacion**: Obligatorio. Identificador de la votación en la que se encuentra el voto a eliminar.
   - **idPregunta**: Obligatorio. Identificador de la pregunta dentro de la votación en la que se encuentra el voto a modificar.
 - Ejemplo de uso:
-    - Petición: `(DELETE) http://URL_BASE/eliminarVoto?token=1234abcde&idVotacion=288&idPregunta=2`
-    - Respuesta: *Por determinar*
+    - Petición: `(DELETE) http://URL_BASE/eliminarVoto`
+	- Cuerpo de la petición: 
+	```
+	token=AAA111
+	idVotacion=288
+	idPregunta=2
+	```
+    - Respuesta: `{"estado": 200,"mensaje": "Voto eliminado satisfactoriamente"}`
