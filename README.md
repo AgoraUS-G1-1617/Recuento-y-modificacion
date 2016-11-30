@@ -50,10 +50,9 @@ Las respuestas incluyen un campo *estado* que indica el código de estado HTTP a
 ### Recontar Votación
 - URL: `(GET) URL_BASE/recontarVotacion`
 - Parámetros:
-    - **token**: Obligatorio. Token de sesión del usuario que solicita el recuento.
     - **idVotacion**: Obligatorio. Identificador de la votación que se desea recontar.
 - Ejemplo de uso:
-    - Petición: `(GET) http://URL_BASE/recontarVotacion?token=1234abcde&idVotacion=288`
+    - Petición: `(GET) http://URL_BASE/recontarVotacion?idVotacion=288`
     - Respuesta: 
     `{"estado":200,"preguntas":[{"id_pregunta":0,"titulo":"¿A quién va a votar en las próximas elecciones?","opciones":[{"id_respuesta":0,"nombre":"Mariano Rajoy","votos":10},{"id_respuesta":1,"nombre":"Pdro Snchz","votos":9},{"id_respuesta":2,"nombre":"Pablo Iglesias","votos":8},{"id_respuesta":3,"nombre":"Albert Rivera","votos":7}]},{"id_pregunta":1,"titulo":"¿Eres mayor de edad?","opciones":[{"id_respuesta":0,"nombre":"Sí","votos":40},{"id_respuesta":1,"nombre":"No","votos":30}]}]}`
 
