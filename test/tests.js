@@ -1,7 +1,7 @@
 var expect    = require("chai").expect;
 var db = require("node-localdb");
-var auth = require("./authModule");
-var modif = require("./modificationModule");
+var auth = require("../authModule");
+var modif = require("../modificationModule");
 
 describe("Comprobación del módulo de Autenticación", function() {
 	describe("Test de Consulta de ID", function() {
