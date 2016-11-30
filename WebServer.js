@@ -183,7 +183,10 @@ router.route("/api/eliminarVoto").delete((request, response) => {
 ///////////////////////////////////////////////////////////////////////
 ///////////////////// Mostrar formulario html /////////////////////////
 ///////////////////////////////////////////////////////////////////////
-server.use(express.static('./'));
+var options = {
+  index: "views/index.html"
+};
+server.use(express.static('./', options));
 server.use(router);
 
 //Para las restantes rutas no especificadas, usar el manejador de 404
