@@ -1,6 +1,7 @@
 ﻿var express = require("express");
 var bodyparser = require("body-parser");
 var authModule = require("./authModule.js");
+var fs = require("fs");
 
 //Creamos una instancia del servidor
 var server = express();
@@ -160,8 +161,21 @@ router.route("/api/eliminarVoto").delete((request, response) => {
 	}
 }).all(display405error);
 
+router.route("/api/clavePublica").get((request, response) => {
+	try {
+		
+		pubkey = fs.readFileSync("keypair/public.key", "utf-8");
+		response.status(HTTP_OK).end(pubkey);
+		
+	} catch(err) {
+		console.log(err);
+		response.status(HTTP_SERVER_ERR).json({estado: HTTP_SERVER_ERR, mensaje: "Error interno del servidor"});
+	}
+	
+}).all(display405error);
+
 ///////////////////////////////////////////////////////////////////////
-///////////////////// Mostrar formulario html /////////////////////////
+///////////////////// MOSTRAR FORMULARIO HTML /////////////////////////
 ///////////////////////////////////////////////////////////////////////
 var options = {
   index: "views/index.html"
@@ -173,7 +187,7 @@ server.use(router);
 server.use(display404error);
 
 var port = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080,
-    ip_address   = process.env.IP   || process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0';
+    ip_address = process.env.IP || process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0';
 
 server.listen(port, ip_address, () => {
 	console.log("Servidor iniciado en el puerto " + port);

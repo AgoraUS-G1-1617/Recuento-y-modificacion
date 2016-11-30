@@ -89,3 +89,20 @@ Las respuestas incluyen un campo *estado* que indica el código de estado HTTP a
 	idPregunta=2
 	```
     - Respuesta: `{"estado": 200,"mensaje": "Voto eliminado satisfactoriamente"}`
+
+### Obtención de clave pública
+####Devuelve la clave pública RSA para el encriptado de votos mediante el módulo de Verificación.
+- URL: `(GET) URL_BASE/clavePublica`
+- Parámetros: ninguno
+- Ejemplo de respuesta:
+```
+-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArzCJi1tsADcuCfDirZpJ
+w+OXm12yYlDbHGTufspJWBp/uVQw+9HlWskTz3Y9Dyd949i2smlR5HhhY1dwQ+Qp
+8z+MNvY5nzUKkgT1eRPpE0VFH9xzVYMQdZvUT64QVd0aXWyebTBXDgyFwHp0mbWA
+wyVWq6FIViJ6Nd5CXnOp3exTKsvXGKQrid3Q2jklR/JEx00O1TkZHYuM+HMiDjfC
+Ig6rPdYthN78C/AOB7isdUQQl1J5XGY/VT8NHtSvUurSpvyrgGcy9bTLjtA6zSxk
+UC6XAW9m7u8ln36NNUb9lBLbrkg6GpNoWIbRzzvtz/jysXfrOGb+TmQQUa+SwJfI
+YQIDAQAB
+-----END PUBLIC KEY-----
+```
