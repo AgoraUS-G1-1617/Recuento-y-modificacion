@@ -4,11 +4,11 @@ Este proyecto corresponde al módulo de Recuento y Modificación de votos de Ago
 El [proyecto del año anterior](https://github.com/AgoraUS1516/G01) de este mismo módulo presentaba graves deficiencias: no tenía integración con ningún otro módulo y la interfaz de usuario no funcionaba adecuadamente mostrando Panics. Por tanto, se va a rehacer en NodeJS, ya que es un lenguaje que ayuda a la simplificación y modularización de los componentes internos del módulo.
 
 # Miembros del equipo
-- Agustín Borrego Díaz
-- David de los Santos Boix
-- Rafael García Domínguez
-- Manuel Tejero Vela
-- Jesús Enrique Bozada Márquez
+- Agustín Borrego Díaz ([@agubelu](https://github.com/agubelu))
+- David de los Santos Boix ([@Dionakra](https://github.com/Dionakra))
+- Rafael García Domínguez ([@rafgardom](https://github.com/rafgardom))
+- Manuel Tejero Vela ([@mantejvel](https://github.com/mantejvel))
+- Jesús Enrique Bozada Márquez ([@enruiq](https://github.com/enruiq))
 
 # Organización del repositorio
 Existen dos ramas principales, "development" y "master". Sobre la rama *development* se efectuarán todos los cambios durante el desarrollo de la aplicación, y eventualmente se crearán ramas sobre ésta para implementar funcionalidades si se considerase necesario. La rama *master* contendrá sólo versiones que se consideren estables, y por lo tanto es la que debería ser usada por los demás equipos para realizar la integración.
