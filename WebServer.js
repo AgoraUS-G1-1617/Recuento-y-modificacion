@@ -20,6 +20,23 @@ server.use(bodyparser.json());
 var router = express.Router();
 
 ///////////////////////////////////////////////////////////////////////
+/////////////////////// COMPROBAR KEYPAIR /////////////////////////////
+///////////////////////////////////////////////////////////////////////
+
+var pubKeyExists = fs.existsSync('keypair/public.key');
+var privKeyExists = fs.existsSync('keypair/private.key');
+
+if(pubKeyExists && !privKeyExists) {
+	console.error("Falta la clave privada, las operaciones de recuento no funcionarán correctamente.");
+} else if(!pubKeyExists && privKeyExists) {
+	console.error("Falta la clave pública, las operaciones de modificación no funcionarán correctamente.");
+} else if(!pubKeyExists && !privKeyExists) {
+	console.log("Faltan las claves pública y privada, generando un nuevo par de claves...");
+	//TODO generar el keypair
+} 
+//else: existen las dos, todo OK
+
+///////////////////////////////////////////////////////////////////////
 /////////////////////   MÉTODOS DE LA API /////////////////////////////
 ///////////////////////////////////////////////////////////////////////
 
@@ -188,6 +205,10 @@ server.use(display404error);
 
 var port = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080,
     ip_address = process.env.IP || process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0';
+	
+///////////////////////////////////////////////////////////////////////
+///////////////////////// ARRANCAR SERVIDOR ///////////////////////////
+///////////////////////////////////////////////////////////////////////
 
 server.listen(port, ip_address, () => {
 	console.log("Servidor iniciado en el puerto " + port);
