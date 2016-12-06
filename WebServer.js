@@ -5,6 +5,7 @@ var fs = require("fs");
 
 //Creamos una instancia del servidor
 var server = express();
+const port = 80;
 
 const HTTP_OK = 200;
 const HTTP_BAD_REQ = 400;
@@ -203,14 +204,11 @@ server.use(router);
 //Para las restantes rutas no especificadas, usar el manejador de 404
 server.use(display404error);
 
-var port = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080,
-    ip_address = process.env.IP || process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0';
-	
 ///////////////////////////////////////////////////////////////////////
 ///////////////////////// ARRANCAR SERVIDOR ///////////////////////////
 ///////////////////////////////////////////////////////////////////////
 
-server.listen(port, ip_address, () => {
+server.listen(port, () => {
 	console.log("Servidor iniciado en el puerto " + port);
 });
 
