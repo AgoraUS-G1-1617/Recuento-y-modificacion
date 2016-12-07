@@ -133,27 +133,27 @@ var changeVote = function(votingToken, voterToken, optionToken){
 
 //Eliminacion del voto
 /*
-*Necesario encuesta y token de voto
+*Necesario token de encuesta y token de voto
 *
 *return voto eliminado
 */
 
-var deleteVote = function(survey, voterToken){
+var deleteVote = function(votingToken, voterToken){
 	console.log("iniciando borrado del voto");
 	var deleteVote = null;
 	
 	if(permissions.voteModif == true && surveyState){
 		var votes = db('db/votes.json');
 		console.log("comprobando exixtencia del voto");
-		deleteVote = votes.findOne({VotingToken: survey.VotingToken, VoterToken: voterToken});
-		
-		if(deleteVote != null){
+		votes.findOne({VotingToken: votingToken, VoterToken: voterToken}).then(function(deleteVote){
+			if(deleteVote != null){
 			console.log("iniciando borrado");
-			votes.remove({VotingToken: survey.VotingToken, VoterToken: voterToken});
-		}else{
-			errorMessage += "Voto no encontrado, no es posible eliminar el voto\n\n";
-			console.log("Voto no encontrado");
-		};
+			votes.remove({VotingToken: votingToken, VoterToken: voterToken});
+			}else{
+				errorMessage += "Voto no encontrado, no es posible eliminar el voto\n\n";
+				console.log("Voto no encontrado");
+			};
+		});
 		
 	}else{
 		console.log("Sin permisos de eliminación de voto");
@@ -258,4 +258,19 @@ var changeVoteTestPositive = function(){
 };
 
 exports.changeVoteTestPositive = changeVoteTestPositive;
+
+
+//Test: eliminar voto
+var deleteVoteTestPositive = function(){
+	return new Promise(function(resolve, reject){
+		var votingToken = "BBB111";
+		var voterToken = "AAA111";
+		permissions.voteModif = true
+		surveyState = true;
+		resolve(deleteVote(votingToken, voterToken));
+	});
+};
+
+exports.deleteVoteTestPositive = deleteVoteTestPositive;
+
 		

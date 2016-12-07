@@ -62,12 +62,10 @@ describe("Tests unitarios módulo modificación", function(){
 		});
 	});
 	
-	//console.log("\n")
-	//checkPermissionsTestNegative();
-	//console.log("\n")
-	//checkSurveyTestPositive();
-	//setTimeout(function(){
-	//checkSurveyTestNegative()}, 500);
-	//setTimeout(function(){
-	//changeVoteTestPositive()}, 1000);
+	it("comprobación de eliminación de voto", function(){
+		modif.deleteVoteTestPositive().then(function(result){
+			expect(result).to.be.undefined;
+		});
+	});
+
 });
