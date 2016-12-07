@@ -1,6 +1,6 @@
 function performAjax(formId, url, method, targetPre){
   var httpData = $("#" + formId).serialize();
-  console.log(httpData);
+  $(targetPre).removeClass('animated wobble');
   $.ajax({
     url: url,
     type: method,
@@ -10,6 +10,7 @@ function performAjax(formId, url, method, targetPre){
     },
     error: function(jqXHR, textStatus, errorThrown){
       targetPre.innerHTML = syntaxHighlight(JSON.stringify(jqXHR.responseJSON, null, 2));
+      $(targetPre).addClass('animated wobble');
     }
   });
 }
