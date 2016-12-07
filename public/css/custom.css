@@ -40,3 +40,7 @@ pre {
 .key {
     color: red;
 }
+
+img.desaturate {
+	filter: grayscale(100%);
+}
