@@ -33,8 +33,8 @@ Los componentes se comunican internamente usando los métodos provistos para ell
 5. Ejecutar el módulo usando `npm start`
 
 # Peticiones a la API Rest
-### URL base de rama estable (master): *Por determinar*
-### URL base de rama de desarrollo (development): *Por determinar*
+### URL base de rama estable (master): https://recuento.agoraus1.egc.duckdns.org/
+### URL base de rama de desarrollo (development): https://beta.recuento.agoraus1.egc.duckdns.org/
 
 ### Códigos de estado HTTP
 - **200 (OK)**: Petición atendida con éxito
