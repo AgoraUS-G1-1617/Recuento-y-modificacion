@@ -10,9 +10,10 @@ function performAjax(formId, url, method, targetPre){
     },
     error: function(jqXHR, textStatus, errorThrown){
       targetPre.innerHTML = syntaxHighlight(JSON.stringify(jqXHR.responseJSON, null, 2));
-      $(targetPre).addClass('animated wobble');
     }
   });
+  $('html,body').animate({scrollTop: $(targetPre).offset().top}, 500);
+  $(targetPre).addClass('animated wobble');
 }
 
 
