@@ -33,8 +33,8 @@ Los componentes se comunican internamente usando los métodos provistos para ell
 5. Ejecutar el módulo usando `npm start`
 
 # Peticiones a la API Rest
-### URL base de rama estable (master): https://recuento.agoraus1.egc.duckdns.org/
-### URL base de rama de desarrollo (development): https://beta.recuento.agoraus1.egc.duckdns.org/
+### URL base de rama estable (master): https://recuento.agoraus1.egc.duckdns.org
+### URL base de rama de desarrollo (development): https://beta.recuento.agoraus1.egc.duckdns.org
 
 ### Códigos de estado HTTP
 - **200 (OK)**: Petición atendida con éxito
@@ -48,7 +48,7 @@ Los componentes se comunican internamente usando los métodos provistos para ell
 Las respuestas incluyen un campo *estado* que indica el código de estado HTTP asociado, para mayor comodidad. Opcionalmente, también pueden incluir un campo *mensaje* que proporciona información sobre la operación.
 
 ### Recontar Votación
-- URL: `(GET) URL_BASE/recontarVotacion`
+- URL: `(GET) URL_BASE/api/recontarVotacion`
 - Parámetros:
     - **idVotacion**: Obligatorio. Identificador de la votación que se desea recontar.
 - Ejemplo de uso:
@@ -57,7 +57,7 @@ Las respuestas incluyen un campo *estado* que indica el código de estado HTTP a
     `{"estado":200,"preguntas":[{"id_pregunta":0,"titulo":"¿A quién va a votar en las próximas elecciones?","opciones":[{"id_respuesta":0,"nombre":"Mariano Rajoy","votos":10},{"id_respuesta":1,"nombre":"Pdro Snchz","votos":9},{"id_respuesta":2,"nombre":"Pablo Iglesias","votos":8},{"id_respuesta":3,"nombre":"Albert Rivera","votos":7}]},{"id_pregunta":1,"titulo":"¿Eres mayor de edad?","opciones":[{"id_respuesta":0,"nombre":"Sí","votos":40},{"id_respuesta":1,"nombre":"No","votos":30}]}]}`
 
 ### Modificar votos
-- URL: `(POST) URL_BASE/modificarVoto`
+- URL: `(POST) URL_BASE/api/modificarVoto`
 - Parámetros:
     - **token**: Obligatorio. Token de sesión del usuario que solicita el cambio de su voto.
     - **idVotacion**: Obligatorio. Identificador de la votación en la que se encuentra el voto a modificar.
@@ -75,7 +75,7 @@ Las respuestas incluyen un campo *estado* que indica el código de estado HTTP a
     - Respuesta: `{"estado": 200,"mensaje": "Voto modificado satisfactoriamente"}`
 
 ### Eliminar votos
-- URL: `(DELETE) URL_BASE/eliminarVoto`
+- URL: `(DELETE) URL_BASE/api/eliminarVoto`
 - Parámetros:
   - **token**: Obligatorio. Token de sesión del usuario que solicita la eliminación de su voto.
   - **idVotacion**: Obligatorio. Identificador de la votación en la que se encuentra el voto a eliminar.
@@ -92,7 +92,7 @@ Las respuestas incluyen un campo *estado* que indica el código de estado HTTP a
 
 ### Obtención de clave pública
 ####Devuelve la clave pública RSA para el encriptado de votos mediante el módulo de Verificación.
-- URL: `(GET) URL_BASE/clavePublica`
+- URL: `(GET) URL_BASE/api/clavePublica`
 - Parámetros: ninguno
 - Ejemplo de respuesta:
 ```
