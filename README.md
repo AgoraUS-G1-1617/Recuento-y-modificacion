@@ -52,7 +52,7 @@ Las respuestas incluyen un campo *estado* que indica el código de estado HTTP a
 - Parámetros:
     - **idVotacion**: Obligatorio. Identificador de la votación que se desea recontar.
 - Ejemplo de uso:
-    - Petición: `(GET) http://URL_BASE/recontarVotacion?idVotacion=288`
+    - Petición: `(GET) http://URL_BASE/api/recontarVotacion?idVotacion=288`
     - Respuesta: 
     `{"estado":200,"preguntas":[{"id_pregunta":0,"titulo":"¿A quién va a votar en las próximas elecciones?","opciones":[{"id_respuesta":0,"nombre":"Mariano Rajoy","votos":10},{"id_respuesta":1,"nombre":"Pdro Snchz","votos":9},{"id_respuesta":2,"nombre":"Pablo Iglesias","votos":8},{"id_respuesta":3,"nombre":"Albert Rivera","votos":7}]},{"id_pregunta":1,"titulo":"¿Eres mayor de edad?","opciones":[{"id_respuesta":0,"nombre":"Sí","votos":40},{"id_respuesta":1,"nombre":"No","votos":30}]}]}`
 
@@ -64,7 +64,7 @@ Las respuestas incluyen un campo *estado* que indica el código de estado HTTP a
 	- **idPregunta**: Obligatorio. Identificador de la pregunta dentro de la votación en la que se encuentra el voto a modificar.
     - **nuevoVoto**: Obligatorio. Identificador de la opción a votar.
 - Ejemplo de uso:
-    - Petición: `(POST) http://URL_BASE/modificarVoto`
+    - Petición: `(POST) http://URL_BASE/api/modificarVoto`
 	- Cuerpo de la petición: 
 	```
 	token=AAA111
@@ -81,7 +81,7 @@ Las respuestas incluyen un campo *estado* que indica el código de estado HTTP a
   - **idVotacion**: Obligatorio. Identificador de la votación en la que se encuentra el voto a eliminar.
   - **idPregunta**: Obligatorio. Identificador de la pregunta dentro de la votación en la que se encuentra el voto a modificar.
 - Ejemplo de uso:
-    - Petición: `(DELETE) http://URL_BASE/eliminarVoto`
+    - Petición: `(DELETE) http://URL_BASE/api/eliminarVoto`
 	- Cuerpo de la petición: 
 	```
 	token=AAA111
