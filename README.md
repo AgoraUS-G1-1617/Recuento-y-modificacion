@@ -37,7 +37,7 @@ Los componentes se comunican internamente usando los métodos provistos para ell
 ### URL base de rama de desarrollo (development): https://beta.recuento.agoraus1.egc.duckdns.org
 
 
-**Importante:** la URL estable no tiene por qué corresponder con la versión actualmente desplegada en la rama *master*, normalmente estará algunas versiones por detrás para garantizar la compatibilidad ante cambios repentinos.
+**Importante:** la URL estable no tiene por qué corresponder con la versión actualmente desplegada en la rama *master*, normalmente estará algunas versiones por detrás para garantizar la compatibilidad ante cambios repentinos. La URL de desarrollo sí contiene la última versión que se encuentre en cada momento en la rama *development*.
 
 ### Códigos de estado HTTP
 - **200 (OK)**: Petición atendida con éxito
