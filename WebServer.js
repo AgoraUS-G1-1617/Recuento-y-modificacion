@@ -1,6 +1,7 @@
 ﻿var express = require("express");
 var bodyparser = require("body-parser");
 var authModule = require("./authModule.js");
+var crypto = require("./crypto.js");
 var fs = require("fs");
 
 //Creamos una instancia del servidor
@@ -33,7 +34,7 @@ if(pubKeyExists && !privKeyExists) {
 	console.error("Falta la clave pública, las operaciones de modificación no funcionarán correctamente.");
 } else if(!pubKeyExists && !privKeyExists) {
 	console.log("Faltan las claves pública y privada, generando un nuevo par de claves...");
-	//TODO generar el keypair
+	crypto.generateKeypair();
 } 
 //else: existen las dos, todo OK
 
