@@ -122,6 +122,8 @@ var changeVote = function(votingToken, voterToken, optionToken){
 	
 };
 
+exports.changeVote = changeVote;
+
 //Eliminacion del voto
 /*
 *Necesario token de encuesta y token de voto
@@ -151,6 +153,8 @@ var deleteVote = function(votingToken, voterToken){
 		errorMessage += "No dispone de permisos para eliminar su voto\n\n";
 	};
 };
+
+exports.deleteVote = deleteVote;
 
 // Funciones de inicialización del módulo
 var init = function(){
