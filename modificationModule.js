@@ -15,16 +15,7 @@ var permissions = {
 * Necesario token de autenticacion
 */
 var checkPermissions = function(authToken){
-	//return new Promise(function(resolve, reject){
-	//	console.log("comprobando autenticación");
-	
-		//if(authToken.vote){
-			//permissions.voteModif = true;
-		//}else{
-		//	permissions.voteModif = false;
-		//};
-		//resolve(permissions.voteModif);
-	//});
+
 	console.log("comprobando autenticación");
 	
 		if(authToken.vote){
@@ -167,8 +158,6 @@ var init = function(){
 	checkSurvey(surveyToken);
 }
 
-//exports.deleteVote = deleteVote;
-//exports.changeVote = changeVote;
 
 //***************************
 //Testing********************
