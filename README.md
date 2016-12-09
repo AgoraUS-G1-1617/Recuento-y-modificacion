@@ -1,3 +1,6 @@
+## Rama *master* (estable): [![Build Status](https://travis-ci.org/AgoraUS-G1-1617/Recuento-y-modificacion.svg?branch=master)](https://travis-ci.org/AgoraUS-G1-1617/Recuento-y-modificacion)
+## Rama *development* (beta): [![Build Status](https://travis-ci.org/AgoraUS-G1-1617/Recuento-y-modificacion.svg?branch=development)](https://travis-ci.org/AgoraUS-G1-1617/Recuento-y-modificacion)
+
 # Introducción
 Este proyecto corresponde al módulo de Recuento y Modificación de votos de Agora@US 2016/17 del grupo 1.
 
