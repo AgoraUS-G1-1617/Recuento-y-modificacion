@@ -8,3 +8,4 @@ install:
 script:
   - npm test test/tests.js
   - npm test test/testBD.js
+jdk: oraclejdk8 
