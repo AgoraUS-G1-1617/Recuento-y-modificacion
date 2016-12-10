@@ -10,7 +10,8 @@
     "https": "^1.0.0",
     "mocha": "^3.2.0",
     "node-localdb": "0.0.3",
-    "request": "^2.79.0"
+    "request": "^2.79.0",
+    "sqlite-sync": "^0.3.6"
   },
   "devDependencies": {},
   "scripts": {
