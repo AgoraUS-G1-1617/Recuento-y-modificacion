@@ -57,7 +57,8 @@ function populateDB() {
 	connect();
 
 	var now = new Date();
-	var futureDate = new Date(now.getTime() + 30 * 24 * 3600 * 1000); //1 mes en el futuro
+	var futureDate = formatDate(new Date(now.getTime() + 30 * 24 * 3600 * 1000)); //1 mes en el futuro
+	now = formatDate(now);
 	
 	var idVotacionTortilla = db.insert("votaciones", { titulo: "Votación definitiva sobre la tortilla de patatas", fecha_creacion: now, fecha_cierre: futureDate });
 	var idVotacionElecciones = db.insert("votaciones", { titulo: "Encuesta sobre intención de voto", fecha_creacion: now, fecha_cierre: futureDate });
@@ -87,6 +88,13 @@ function populateDB() {
 	
 	db.close();
 	console.log("Poblado completado con éxito.");
+}
+
+function addVote(tokenUser, idPregunta, voto) {
+	connect();
+	var idNewVote = db.insert("votos", { token_user: tokenUser, id_pregunta: idPregunta, opcion: voto });
+	db.close();
+	return newIdVote();
 }
 
 function getPreguntasVotacion(idVotacion) {
@@ -119,6 +127,7 @@ function getPolls(detailed) {
 	if(detailed) {
 		for(var i = 0; i < votaciones.length; i++) {
 			var votacion = votaciones[i];
+			
 			var preguntas = getPreguntasVotacion(votacion["id_votacion"]);
 			
 			for(var j = 0; j < preguntas.length; j++) {
@@ -134,7 +143,18 @@ function getPolls(detailed) {
 	return votaciones;
 }
 
-//createDB();
-//populateDB();
+////////////////////////////////////////////////////
 
-console.log(JSON.stringify(getPolls(true)));
+function formatDate(date) {
+	function f(x) {
+		return x<10?"0"+x:x;
+	}
+	return f(date.getFullYear()) + "-" + f(date.getMonth()+1) + "-" + f(date.getDate()) + " " + f(date.getHours()) + ":" + f(date.getMinutes()) + ":" + f(date.getSeconds());
+}
+
+exports.createDB = createDB;
+exports.populateDB = populateDB;
+exports.addVote = addVote;
+exports.getPreguntasVotacion = getPreguntasVotacion;
+exports.getOpcionesPregunta = getOpcionesPregunta;
+exports.getPolls = getPolls;
