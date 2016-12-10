@@ -1,5 +1,5 @@
 language: node_js
-jdk: oraclejdk8 
+jdk: oraclejdk7
 node_js:
   - "6"
   - "5"
