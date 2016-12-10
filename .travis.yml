@@ -1,14 +1,8 @@
-language:
-  - node_js
-  - java
+language: node_js
 node_js:
   - "6"
   - "5"
   - "4"
-jdk:
-  - oraclejdk8
-install:
-  - npm install
+install: npm install
 script:
   - npm test test/tests.js
-  - npm test test/testBD.js
