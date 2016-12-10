@@ -6,40 +6,40 @@ function connect() {
 }
 
 function createDB() {
-	var command = 	"DROP TABLE IF EXISTS VOTACIONES;" +
-					"DROP TABLE IF EXISTS PREGUNTAS;" +
-					"DROP TABLE IF EXISTS OPCIONES;" +
-					"DROP TABLE IF EXISTS VOTOS;" +
+	var command = 	"DROP TABLE IF EXISTS votaciones;" +
+					"DROP TABLE IF EXISTS preguntas;" +
+					"DROP TABLE IF EXISTS opciones;" +
+					"DROP TABLE IF EXISTS votos;" +
 					
-					"CREATE TABLE VOTACIONES (" +
-						"ID INTEGER PRIMARY KEY AUTOINCREMENT," +
-						"TITULO TEXT NOT NULL," +
-						"FECHA_CREACION DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP," +
-						"FECHA_CIERRE DATETIME NOT NULL" +
+					"CREATE TABLE votaciones (" +
+						"id INTEGER PRIMARY KEY AUTOINCREMENT," +
+						"titulo TEXT NOT NULL," +
+						"fecha_creacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP," +
+						"fecha_cierre DATETIME NOT NULL" +
 					");" +
 					
-					"CREATE TABLE PREGUNTAS (" +
-						"ID INTEGER PRIMARY KEY AUTOINCREMENT," +
-						"TEXTO_PREGUNTA TEXT NOT NULL," +
-						"MULTIRESPUESTA BOOLEAN NOT NULL DEFAULT FALSE," +
-						"ID_VOTACION INTEGER NOT NULL," +
-						"FOREIGN KEY (ID_VOTACION) REFERENCES VOTACIONES(ID)" +
+					"CREATE TABLE preguntas (" +
+						"id INTEGER PRIMARY KEY AUTOINCREMENT," +
+						"texto_pregunta TEXT NOT NULL," +
+						"multirespuesta BOOLEAN NOT NULL DEFAULT FALSE," +
+						"id_votacion INTEGER NOT NULL," +
+						"FOREIGN KEY (id_votacion) REFERENCES votaciones(id)" +
 					");" +
 					
-					"CREATE TABLE OPCIONES (" +
-						"ID INTEGER PRIMARY KEY AUTOINCREMENT," + 
-						"TEXTO_OPCION TEXT NOT NULL," +
-						"ID_PREGUNTA INTEGER NOT NULL," +
-						"FOREIGN KEY (ID_PREGUNTA) REFERENCES PREGUNTAS(ID)" +
+					"CREATE TABLE opciones (" +
+						"id INTEGER PRIMARY KEY AUTOINCREMENT," + 
+						"texto_opcion TEXT NOT NULL," +
+						"id_pregunta INTEGER NOT NULL," +
+						"FOREIGN KEY (id_pregunta) REFERENCES preguntas(id)" +
 					");" +
 					
-					"CREATE TABLE VOTOS (" +
-						"ID INTEGER PRIMARY KEY AUTOINCREMENT," +
-						"TOKEN_USER TEXT NOT NULL," +
-						"FECHA DATETIME DEFAULT CURRENT_TIMESTAMP," +
-						"ID_PREGUNTA INTEGER NOT NULL," +
-						"OPCION TEXT NOT NULL," +
-						"FOREIGN KEY (ID_PREGUNTA) REFERENCES PREGUNTAS(ID)" +
+					"CREATE TABLE votos (" +
+						"id INTEGER PRIMARY KEY AUTOINCREMENT," +
+						"token_user TEXT NOT NULL," +
+						"fecha DATETIME DEFAULT CURRENT_TIMESTAMP," +
+						"id_pregunta INTEGER NOT NULL," +
+						"opcion TEXT NOT NULL," +
+						"FOREIGN KEY (id_pregunta) REFERENCES preguntas(id)" +
 					");";
 					
 	console.log("Creando base de datos...");
@@ -59,35 +59,82 @@ function populateDB() {
 	var now = new Date();
 	var futureDate = new Date(now.getTime() + 30 * 24 * 3600 * 1000); //1 mes en el futuro
 	
-	var idVotacionTortilla = db.insert("VOTACIONES", { TITULO: "Votación definitiva sobre la tortilla de patatas", FECHA_CREACION: now, FECHA_CIERRE: futureDate });
-	var idVotacionElecciones = db.insert("VOTACIONES", { TITULO: "Encuesta sobre intención de voto", FECHA_CREACION: now, FECHA_CIERRE: futureDate });
+	var idVotacionTortilla = db.insert("votaciones", { titulo: "Votación definitiva sobre la tortilla de patatas", fecha_creacion: now, fecha_cierre: futureDate });
+	var idVotacionElecciones = db.insert("votaciones", { titulo: "Encuesta sobre intención de voto", fecha_creacion: now, fecha_cierre: futureDate });
 	
-	var idPregunta1Tortilla = db.insert("PREGUNTAS", { TEXTO_PREGUNTA: "¿Prefiere Ud. la tortilla con o sin cebolla?", MULTIRESPUESTA: false, ID_VOTACION: idVotacionTortilla});
-	var idPregunta1Elecciones = db.insert("PREGUNTAS", { TEXTO_PREGUNTA: "¿A qué políticos votaría Ud.?", MULTIRESPUESTA: true, ID_VOTACION: idVotacionElecciones });
-	var idPregunta2Elecciones = db.insert("PREGUNTAS", { TEXTO_PREGUNTA: "¿Es Ud. mayor de edad?", MULTIRESPUESTA: false, ID_VOTACION: idVotacionElecciones });
+	var idPregunta1Tortilla = db.insert("preguntas", { texto_pregunta: "¿Prefiere Ud. la tortilla con o sin cebolla?", multirespuesta: false, id_votacion: idVotacionTortilla});
+	var idPregunta1Elecciones = db.insert("preguntas", { texto_pregunta: "¿A qué políticos votaría Ud.?", multirespuesta: true, id_votacion: idVotacionElecciones });
+	var idPregunta2Elecciones = db.insert("preguntas", { texto_pregunta: "¿Es Ud. mayor de edad?", multirespuesta: false, id_votacion: idVotacionElecciones });
 	
-	var idOp1Tortilla = db.insert("OPCIONES", { TEXTO_OPCION: "Sin cebolla, y además me gusta devorar gatitos indefensos.", ID_PREGUNTA: idPregunta1Tortilla });
-	var idOp2Tortilla = db.insert("OPCIONES", { TEXTO_OPCION: "Con cebolla, y además rescato a los gatitos abandonados.", ID_PREGUNTA: idPregunta1Tortilla });
+	var idOp1Tortilla = db.insert("opciones", { texto_opcion: "Sin cebolla, y además me gusta devorar gatitos indefensos.", id_pregunta: idPregunta1Tortilla });
+	var idOp2Tortilla = db.insert("opciones", { texto_opcion: "Con cebolla, y además rescato a los gatitos abandonados.", id_pregunta: idPregunta1Tortilla });
 	
-	var idO1P1Elecciones = db.insert("OPCIONES", { TEXTO_OPCION: "Mariano Rajoy", ID_PREGUNTA: idPregunta1Elecciones });
-	var idO2P1Elecciones = db.insert("OPCIONES", { TEXTO_OPCION: "Pdro Snchz", ID_PREGUNTA: idPregunta1Elecciones });
-	var idO3P1Elecciones = db.insert("OPCIONES", { TEXTO_OPCION: "Pablo Iglesias", ID_PREGUNTA: idPregunta1Elecciones });
-	var idO4P1Elecciones = db.insert("OPCIONES", { TEXTO_OPCION: "Albert Rivera", ID_PREGUNTA: idPregunta1Elecciones });
-	var idO5P1Elecciones = db.insert("OPCIONES", { TEXTO_OPCION: "Alberto Garzón", ID_PREGUNTA: idPregunta1Elecciones });
-	var idO6P1Elecciones = db.insert("OPCIONES", { TEXTO_OPCION: "Rosa Díez", ID_PREGUNTA: idPregunta1Elecciones });
-	var idO7P1Elecciones = db.insert("OPCIONES", { TEXTO_OPCION: "Kodos", ID_PREGUNTA: idPregunta1Elecciones });
+	var idO1P1Elecciones = db.insert("opciones", { texto_opcion: "Mariano Rajoy", id_pregunta: idPregunta1Elecciones });
+	var idO2P1Elecciones = db.insert("opciones", { texto_opcion: "Pdro Snchz", id_pregunta: idPregunta1Elecciones });
+	var idO3P1Elecciones = db.insert("opciones", { texto_opcion: "Pablo Iglesias", id_pregunta: idPregunta1Elecciones });
+	var idO4P1Elecciones = db.insert("opciones", { texto_opcion: "Albert Rivera", id_pregunta: idPregunta1Elecciones });
+	var idO5P1Elecciones = db.insert("opciones", { texto_opcion: "Alberto Garzón", id_pregunta: idPregunta1Elecciones });
+	var idO6P1Elecciones = db.insert("opciones", { texto_opcion: "Rosa Díez", id_pregunta: idPregunta1Elecciones });
+	var idO7P1Elecciones = db.insert("opciones", { texto_opcion: "Kodos", id_pregunta: idPregunta1Elecciones });
 	
-	var idOP1P2Elecciones = db.insert("OPCIONES", { TEXTO_OPCION: "Sí", ID_PREGUNTA: idPregunta2Elecciones });
-	var idOP1P2Elecciones = db.insert("OPCIONES", { TEXTO_OPCION: "No", ID_PREGUNTA: idPregunta2Elecciones });
+	var idOP1P2Elecciones = db.insert("opciones", { texto_opcion: "Sí", id_pregunta: idPregunta2Elecciones });
+	var idOP1P2Elecciones = db.insert("opciones", { texto_opcion: "No", id_pregunta: idPregunta2Elecciones });
 	
-	db.insert("VOTOS", { TOKEN_USER: "AAA111", ID_PREGUNTA: idPregunta1Tortilla, OPCION: crypto.encrypt(idOp2Tortilla) });
-	db.insert("VOTOS", { TOKEN_USER: "BBB222", ID_PREGUNTA: idPregunta1Elecciones, OPCION: crypto.encrypt(idO4P1Elecciones) });
-	db.insert("VOTOS", { TOKEN_USER: "BBB222", ID_PREGUNTA: idPregunta1Elecciones, OPCION: crypto.encrypt(idO7P1Elecciones) });
-	db.insert("VOTOS", { TOKEN_USER: "CCC333", ID_PREGUNTA: idPregunta2Elecciones, OPCION: crypto.encrypt(idOP1P2Elecciones) });
+	db.insert("votos", { token_user: "AAA111", id_pregunta: idPregunta1Tortilla, opcion: crypto.encrypt(idOp2Tortilla) });
+	db.insert("votos", { token_user: "BBB222", id_pregunta: idPregunta1Elecciones, opcion: crypto.encrypt(idO4P1Elecciones) });
+	db.insert("votos", { token_user: "BBB222", id_pregunta: idPregunta1Elecciones, opcion: crypto.encrypt(idO7P1Elecciones) });
+	db.insert("votos", { token_user: "CCC333", id_pregunta: idPregunta2Elecciones, opcion: crypto.encrypt(idOP1P2Elecciones) });
 	
 	db.close();
 	console.log("Poblado completado con éxito.");
 }
 
-createDB();
-populateDB();
+function getPreguntasVotacion(idVotacion) {
+	command = "SELECT id AS id_pregunta, texto_pregunta, multirespuesta FROM preguntas WHERE id_votacion = ?";
+	connect();
+	var preguntas = db.run(command, [idVotacion]);
+	db.close();
+	return preguntas;
+}
+
+function getOpcionesPregunta(idPregunta) {
+	command = "SELECT id AS id_opcion, texto_opcion FROM opciones WHERE id_pregunta = ?";
+	connect();
+	var opciones = db.run(command, [idPregunta]);
+	db.close();
+	return opciones;
+}
+
+
+function getPolls(detailed) {
+	//Si detailed es true, devolver toda la información (incluyendo preguntas y opciones)
+	//Si no, sólo la información básica de la encuesta
+	
+	command = "SELECT id AS id_votacion, titulo, fecha_creacion, fecha_cierre FROM votaciones";
+	
+	connect();
+	var votaciones = db.run(command);
+	db.close();
+	
+	if(detailed) {
+		for(var i = 0; i < votaciones.length; i++) {
+			var votacion = votaciones[i];
+			var preguntas = getPreguntasVotacion(votacion["id_votacion"]);
+			
+			for(var j = 0; j < preguntas.length; j++) {
+				pregunta = preguntas[j];
+				var opciones = getOpcionesPregunta(pregunta["id_pregunta"]);
+				pregunta["opciones"] = opciones;
+			}
+			
+			votacion["preguntas"] = preguntas;
+		}
+	}
+	
+	return votaciones;
+}
+
+//createDB();
+//populateDB();
+
+console.log(JSON.stringify(getPolls(true)));
