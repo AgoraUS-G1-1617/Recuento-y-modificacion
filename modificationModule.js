@@ -108,11 +108,10 @@ var checkIntegridadOpciones = function(preguntaId, opciones){
 */
 
 var changeVote = function(pollId, userToken, preguntaId, options){
-	console.log("iniciando modificación de votos");
+	console.log("Iniciando modificación de votos");
 	console.log("Comprobando integridad de encuesta");
 	if(checkSurvey(pollId)){
-		;
-		;
+
 		if(checkIntegridadPregunta(pollId, preguntaId) && checkIntegridadOpciones(preguntaId, options)){
 			console.log("Procediendo a realizar la modificación");
 		
@@ -143,28 +142,29 @@ var changeVote = function(pollId, userToken, preguntaId, options){
 *return voto eliminado
 */
 
-var deleteVote = function(votingToken, voterToken){
-	console.log("iniciando borrado del voto");
-	var deleteVote = null;
-	
-	if(permissions.voteModif == true && surveyState){
-		var votes = db('db/votes.json');
-		console.log("comprobando exixtencia del voto");
-		votes.findOne({VotingToken: votingToken, VoterToken: voterToken}).then(function(deleteVote){
-			if(deleteVote != null){
-			console.log("iniciando borrado");
-			votes.remove({VotingToken: votingToken, VoterToken: voterToken});
-			}else{
-				errorMessage += "Voto no encontrado, no es posible eliminar el voto\n\n";
-				console.log("Voto no encontrado");
-			};
-		});
+var deleteVote = function(pollId, userToken, preguntaId){
+	console.log("Iniciando borrado del voto");
+	if(checkSurvey(pollId)){
+		
+		if(checkIntegridadPregunta(pollId, preguntaId)){
+			
+			try{
+				var vote = database.getVoteByUserAndPregunta(userToken, preguntaId);
+				database.deleteVote(vote.id);
+				console.log("Voto eliminado correctamente");
+				
+			}catch(error){
+				console.log("No se ha podido eliminar el voto: " + error);
+			}
+		
+		}else{
+			console.log("La pregunta no es correcta, no se ha podido eliminar el voto");
+		};
 		
 	}else{
-		console.log("Sin permisos de eliminación de voto");
-		errorMessage += "No dispone de permisos para eliminar su voto\n\n";
-	};
-};
+		console.log("La encuesta ha finalizado");
+	}
+}
 
 
 // Funciones de inicialización del módulo
