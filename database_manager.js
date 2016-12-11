@@ -52,6 +52,7 @@ function createDB() {
 	console.log("Base de datos creada con éxito.");
 }
 
+
 function populateDB() {
 	console.log("Poblando base de datos...");
 	connect();
@@ -83,12 +84,13 @@ function populateDB() {
 	
 	db.insert("votos", { token_user: "AAA111", id_pregunta: idPregunta1Tortilla, opcion: crypto.encrypt(idOp2Tortilla) });
 	db.insert("votos", { token_user: "BBB222", id_pregunta: idPregunta1Elecciones, opcion: crypto.encrypt(idO4P1Elecciones) });
-	db.insert("votos", { token_user: "BBB222", id_pregunta: idPregunta1Elecciones, opcion: crypto.encrypt(idO7P1Elecciones) });
+	db.insert("votos", { token_user: "BBB111", id_pregunta: idPregunta1Elecciones, opcion: crypto.encrypt(idO7P1Elecciones) });
 	db.insert("votos", { token_user: "CCC333", id_pregunta: idPregunta2Elecciones, opcion: crypto.encrypt(idOP1P2Elecciones) });
 	
 	db.close();
 	console.log("Poblado completado con éxito.");
 }
+
 
 function addVote(tokenUser, idPregunta, voto) {
 	connect();
@@ -106,7 +108,7 @@ function getPreguntasVotacion(idVotacion) {
 }
 
 function getOpcionesPregunta(idPregunta) {
-	command = "SELECT id AS id_opcion, texto_opcion FROM opciones WHERE id_pregunta = ?";
+	command = "SELECT id AS id_opcion, texto_opcion, id_pregunta FROM opciones WHERE id_pregunta = ?";
 	connect();
 	var opciones = db.run(command, [idPregunta]);
 	db.close();
@@ -143,6 +145,72 @@ function getPolls(detailed) {
 	return votaciones;
 }
 
+
+function findPollById(pollId){
+	
+	command = "SELECT id AS id_votacion, titulo, fecha_creacion, fecha_cierre FROM votaciones where id = " + pollId;
+	
+	connect();
+	var poll = db.run(command);
+	db.close();
+	
+	return poll[0];
+};
+
+function findPreguntaById(preguntaId){
+	
+	command = "SELECT * from preguntas where id = " + preguntaId;
+	
+	connect();
+	var pregunta = db.run(command);
+	db.close();
+	
+	return pregunta[0];
+};
+
+function findOpcionById(opcionId){
+	
+	command = "SELECT * from opciones where id = " + opcionId;
+	
+	connect();
+	var opcion = db.run(command);
+	db.close();
+	
+	return opcion;
+};
+
+function updateVote(voteId, opcion){
+	
+	connect();
+	
+	var update = db.update("votos",{opcion: opcion},{id:voteId});
+	db.close();
+	
+	return update;
+}
+
+function getVoteByUserAndPregunta(userToken, preguntaId){
+	
+	command = "SELECT * from votos where token_user = '"+userToken+"' and id_pregunta = " + preguntaId;
+	
+	connect();
+	var vote = db.run(command);
+	db.close();
+	
+	return vote[0];
+};
+
+
+function deleteVote(voteId){
+	command = "delete from votos where id = " + voteId;
+	
+	connect();
+	db.run(command);
+	db.close();
+	
+};
+
+
 ////////////////////////////////////////////////////
 
 function formatDate(date) {
@@ -158,3 +226,9 @@ exports.addVote = addVote;
 exports.getPreguntasVotacion = getPreguntasVotacion;
 exports.getOpcionesPregunta = getOpcionesPregunta;
 exports.getPolls = getPolls;
+exports.findPollById = findPollById;
+exports.findPreguntaById = findPreguntaById;
+exports.findOpcionById = findOpcionById;
+exports.getVoteByUserAndPregunta = getVoteByUserAndPregunta;
+exports.deleteVote = deleteVote;
+exports.updateVote = updateVote;
