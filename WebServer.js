@@ -160,6 +160,11 @@ router.route("/api/eliminarVoto").post((request, response) => {
 		var idVotacion = request.body.idVotacion;
 		var idPregunta = request.body.idPregunta;
 		
+		if(isNaN(idVotacion) || isNaN(idPregunta)) {
+			response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "Los identificadores no son válidos"});
+			return;
+		}
+		
 		//Hacer todas las comprobaciones y operaciones oportunas...
 		authModule.getCredentials(token).then(data => {
 			
