@@ -2,6 +2,7 @@ var expect    = require("chai").expect;
 var db = require("node-localdb");
 var auth = require("../authModule");
 var modif = require("../modificationModule");
+var database = require("../database_manager");
 
 describe("Comprobación del módulo de Autenticación", function() {
 	describe("Test de Consulta de ID", function() {
@@ -27,45 +28,38 @@ describe("Comprobación del módulo de Autenticación", function() {
   	});
 });
 
+
+
 describe("Tests unitarios módulo modificación", function(){
-	it("comprobación de permisos", function(){
-		modif.checkPermissionsTestPositive().then(function (result){
-			expect(result).to.be.true;
-		});
+	//Repoblado de base de datos
+	
+	database.createDB();
+	database.populateDB();
+	
+	it("Comprobación de encuesta", function(){
+		var result = modif.checkSurveyTest();
+		expect(result).to.be.true;
 		
 	});
 	
-	it("comprobación de permisos", function(){
-		modif.checkPermissionsTestNegative().then(function(result){
-			expect(result).to.be.false;
-		});
+	it("Comprobación de pregunta", function(){
+		var result = modif.checkIntegridadPreguntaTest();
+		expect(result).to.be.true;
 		
 	});
 	
-	it("comprobación de encuesta", function(){
-		modif.checkSurveyTestPositive().then(function(result){
-			expect(result).to.be.true;
-		});
+	it("Modificación de voto (Satisfactorio)", function(){
+		var result = modif.changeVoteTestPositive();
+		expect(result).not.to.be.undefined;
 		
 	});
 	
-	it("comprobación de encuesta", function(){
-		modif.checkSurveyTestNegative().then(function(result){
-			expect(result).to.be.false;
-		});
+	it("Eliminación de voto (Satisfactorio)", function(){
+		var result = modif.deleteVoteTestPositive();
+		expect(result).to.be.true;
 		
 	});
 	
-	it("comprobación de modificación de voto", function(){
-		modif.changeVoteTestPositive().then(function(result){
-			expect(result).not.to.be.undefined;
-		});
-	});
 	
-	it("comprobación de eliminación de voto", function(){
-		modif.deleteVoteTestPositive().then(function(result){
-			expect(result).to.be.undefined;
-		});
-	});
 
 });

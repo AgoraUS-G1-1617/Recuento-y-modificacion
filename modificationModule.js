@@ -70,6 +70,7 @@ var processDate = function(surveyDate){
 	return result;
 };
 
+
 //Comprobación integridad pregunta
 var checkIntegridadPregunta = function(pollId, preguntaId){
 	console.log("Comprobando integridad de la pregunta");
@@ -86,30 +87,6 @@ var checkIntegridadPregunta = function(pollId, preguntaId){
 	return true;
 };
 
-//Comprobación integridad opciones
-var checkIntegridadOpciones = function(preguntaId, opciones){
-	console.log("Comprobando integridad de la opción");
-	var result = true;
-	if(opciones.length = 1){
-		if(opciones[0].id_pregunta != preguntaId){
-			result = false;
-		}
-		
-	}else{
-		for(var i = 0; i < opciones.length; i++){
-			if(opciones[i].id_pregunta != preguntaId){
-				result = false;
-				break;
-			}
-		};
-	};
-	
-	if(!result) {
-		throw "La opción indicada no pertenece a esa pregunta";
-	}
-	
-	return result;
-};
 
 //Modificacion del voto
 /*
@@ -123,13 +100,14 @@ var changeVote = function(pollId, userToken, preguntaId, options){
 	console.log("Comprobando integridad de encuesta");
 	if(checkSurvey(pollId)){
 
-		if(checkIntegridadPregunta(pollId, preguntaId) && checkIntegridadOpciones(preguntaId, options)){
+		if(checkIntegridadPregunta(pollId, preguntaId)){
 			console.log("Procediendo a realizar la modificación");
 		
 			var voto = database.getVoteByUserAndPregunta(userToken, preguntaId);
 
 			if(!voto) {
 				throw "El usuario no ha votado aún en esa pregunta, por lo que no se puede modificar";
+				return false;
 			}
 			database.updateVote(voto.id, options);
 
@@ -140,10 +118,12 @@ var changeVote = function(pollId, userToken, preguntaId, options){
 			
 		}else{
 			throw "La pregunta y/o opción/es no son correcta/s";
+			return false;
 		}
 
 	}else{
 		throw "La encuesta ha finalizado";
+		return false;
 	}
 };
 
@@ -167,18 +147,23 @@ var deleteVote = function(pollId, userToken, preguntaId){
 					throw "El usuario no ha votado aún en esa pregunta, por lo que no se puede eliminar";
 				}
 				database.deleteVote(vote.id);
+				
 				console.log("Voto eliminado correctamente");
+				return true;
 				
 			}catch(error){
 				throw "No se ha podido eliminar el voto: " + error;
+				return false;
 			}
 		
 		}else{
 			throw "La pregunta no es correcta, no se ha podido eliminar el voto";
+			return false;
 		}
 		
 	}else{
 		throw "La encuesta ha finalizado";
+		return false;
 	}
 }
 
@@ -198,8 +183,6 @@ var expect = require("chai").expect;
 //Test: comprobación de permisos
 var checkPermissionsTestPositive = function(){
 	return new Promise(function(resolve, reject){
-		console.log("\n")
-		console.log("************ CHECK PERMISSIONS TEST (POSITIVE) *******************");
 		permissions.voteModif = null;
 		var authToken = null;
 		authToken={vote:''};
@@ -228,18 +211,19 @@ var checkPermissionsTestNegative = function(){
 
 
 //Test: comprobación de encuesta
-var checkSurveyTestPositive = function(){
-	return new Promise(function(resolve, reject){
-		console.log("\n")
-		console.log("************ CHECK SURVEY STATE (POSITIVE) *******************");
-		var votingToken = "BBB111";
-		console.log("Test positivo: la encuesta está disponible y permite modificación de voto");
-		resolve(checkSurvey(votingToken));
-	});
+var checkSurveyTest = function(){
 	
+	var votingToken = 1;
+	return checkSurvey(votingToken);
 };
 
-
+//Test: integridad de pregunta
+var checkIntegridadPreguntaTest = function(){
+	var pollId = 2;
+	var preguntaId = 3;
+	
+	return checkIntegridadPregunta(pollId, preguntaId);
+};
 
 //Test: comprobación de encuesta
 var checkSurveyTestNegative = function(){
@@ -257,37 +241,39 @@ var checkSurveyTestNegative = function(){
 
 //Test: cambiar voto
 var changeVoteTestPositive = function(){
-	return new Promise(function(resolve, reject){
-		console.log("\n")
-		console.log("************ CHANGE VOTE (POSITIVE) *******************");
-		var votingToken = "BBB111";
-		var voterToken = "AAA111";
-		var optionToken = "CCC222";
-		permissions.voteModif = true
-		surveyState = true;
-		console.log("Test positivo: se permite y se completa la modificación del voto");
-		resolve(changeVote(votingToken, voterToken, optionToken));
-	});
+	var pollId = 2;
+	var userToken = "BBB222";
+	var preguntaId = 2;
+	var options = database.getOpcionesPregunta(preguntaId);
 	
+	return changeVote(pollId, userToken, preguntaId, options);
+};
+
+var changeVoteTestNegative = function(){
+	var pollId = 2;
+	var userToken = "BBB222";
+	var preguntaId = 1;
+	var options = database.getOpcionesPregunta(preguntaId);
 	
+	return changeVote(pollId, userToken, preguntaId, options);
 };
 
 
 //Test: eliminar voto
 var deleteVoteTestPositive = function(){
-	return new Promise(function(resolve, reject){
-		var votingToken = "BBB111";
-		var voterToken = "AAA111";
-		permissions.voteModif = true
-		surveyState = true;
-		resolve(deleteVote(votingToken, voterToken));
-	});
+	var pollId = 2;
+	var userToken = "BBB222";
+	var preguntaId = 2;
+	
+	return deleteVote(pollId, userToken, preguntaId);
 };
 
 exports.deleteVoteTestPositive = deleteVoteTestPositive;
 exports.changeVoteTestPositive = changeVoteTestPositive;
+exports.changeVoteTestNegative = changeVoteTestNegative;
 exports.checkSurveyTestNegative = checkSurveyTestNegative;
-exports.checkSurveyTestPositive = checkSurveyTestPositive;
+exports.checkIntegridadPreguntaTest = checkIntegridadPreguntaTest;
+exports.checkSurveyTest = checkSurveyTest;
 exports.checkPermissionsTestNegative = checkPermissionsTestNegative;
 exports.checkPermissionsTestPositive = checkPermissionsTestPositive;
 exports.deleteVote = deleteVote;

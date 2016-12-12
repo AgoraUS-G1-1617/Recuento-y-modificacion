@@ -175,10 +175,10 @@ function getPolls(detailed, pollId) {
 
 function findPollById(pollId){
 	
-	command = "SELECT id AS id_votacion, titulo, fecha_creacion, fecha_cierre FROM votaciones where id = " + pollId;
+	command = "SELECT id AS id_votacion, titulo, fecha_creacion, fecha_cierre FROM votaciones where id = ?";
 	
 	connect();
-	var poll = db.run(command);
+	var poll = db.run(command, [pollId]);
 	db.close();
 	
 	return poll[0];
@@ -186,10 +186,10 @@ function findPollById(pollId){
 
 function findPreguntaById(preguntaId){
 	
-	command = "SELECT * from preguntas where id = " + preguntaId;
+	command = "SELECT * from preguntas where id = ?";
 	
 	connect();
-	var pregunta = db.run(command);
+	var pregunta = db.run(command, [preguntaId]);
 	db.close();
 	
 	return pregunta[0];
@@ -197,10 +197,10 @@ function findPreguntaById(preguntaId){
 
 function findOpcionById(opcionId){
 	
-	command = "SELECT * from opciones where id = " + opcionId;
+	command = "SELECT * from opciones where id = ?";
 	
 	connect();
-	var opcion = db.run(command);
+	var opcion = db.run(command, [opcionId]);
 	db.close();
 	
 	return opcion;
@@ -218,10 +218,10 @@ function updateVote(voteId, opcion){
 
 function getVoteByUserAndPregunta(userToken, preguntaId){
 	
-	command = "SELECT * from votos where token_user = '"+userToken+"' and id_pregunta = " + preguntaId;
+	command = "SELECT * from votos where token_user = ? and id_pregunta = ?";
 	
 	connect();
-	var vote = db.run(command);
+	var vote = db.run(command, [userToken, preguntaId]);
 	db.close();
 	
 	return vote[0];
@@ -229,10 +229,10 @@ function getVoteByUserAndPregunta(userToken, preguntaId){
 
 
 function deleteVote(voteId){
-	command = "delete from votos where id = " + voteId;
+	command = "delete from votos where id = ?";
 	
 	connect();
-	db.run(command);
+	db.run(command, [voteId]);
 	db.close();
 	
 };
