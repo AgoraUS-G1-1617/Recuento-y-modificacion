@@ -39,7 +39,7 @@ var checkSurvey = function(pollId){
 	var poll = database.findPollById(pollId);
 	console.log("fin lectura base de datos");
 	if(poll == null){
-		console.log("No existe ninguna encuesta con el ID introducido");
+		throw "No existe ninguna encuesta con el ID introducido";
 	}else{
 
 		if(new Date(poll.fecha_cierre) > now){
@@ -74,8 +74,16 @@ var processDate = function(surveyDate){
 var checkIntegridadPregunta = function(pollId, preguntaId){
 	console.log("Comprobando integridad de la pregunta");
 	var pregunta = database.findPreguntaById(preguntaId);
+	
+	if(!pregunta) {
+		throw "La pregunta indicada no existe";
+	}
 
-	return pregunta.id_votacion == pollId;
+	if(pregunta.id_votacion != pollId) {
+		throw "La pregunta no corresponde a la votación indicada";
+	}
+	
+	return true;
 };
 
 //Comprobación integridad opciones
@@ -95,6 +103,10 @@ var checkIntegridadOpciones = function(preguntaId, opciones){
 			}
 		};
 	};
+	
+	if(!result) {
+		throw "La opción indicada no pertenece a esa pregunta";
+	}
 	
 	return result;
 };
@@ -116,7 +128,9 @@ var changeVote = function(pollId, userToken, preguntaId, options){
 		
 			var voto = database.getVoteByUserAndPregunta(userToken, preguntaId);
 
-			console.log("Modificando voto");
+			if(!voto) {
+				throw "El usuario no ha votado aún en esa pregunta, por lo que no se puede modificar";
+			}
 			database.updateVote(voto.id, options);
 
 			var newVote = database.getVoteByUserAndPregunta(userToken, preguntaId);
@@ -125,11 +139,11 @@ var changeVote = function(pollId, userToken, preguntaId, options){
 			return newVote;
 			
 		}else{
-			console.log("La pregunta y/o opción/es no son correcta/s");
-		};
+			throw "La pregunta y/o opción/es no son correcta/s";
+		}
 
 	}else{
-		console.log("La encuesta ha finalizado");
+		throw "La encuesta ha finalizado";
 	}
 };
 
@@ -149,19 +163,22 @@ var deleteVote = function(pollId, userToken, preguntaId){
 			
 			try{
 				var vote = database.getVoteByUserAndPregunta(userToken, preguntaId);
+				if(!vote) {
+					throw "El usuario no ha votado aún en esa pregunta, por lo que no se puede eliminar";
+				}
 				database.deleteVote(vote.id);
 				console.log("Voto eliminado correctamente");
 				
 			}catch(error){
-				console.log("No se ha podido eliminar el voto: " + error);
+				throw "No se ha podido eliminar el voto: " + error;
 			}
 		
 		}else{
-			console.log("La pregunta no es correcta, no se ha podido eliminar el voto");
-		};
+			throw "La pregunta no es correcta, no se ha podido eliminar el voto";
+		}
 		
 	}else{
-		console.log("La encuesta ha finalizado");
+		throw "La encuesta ha finalizado";
 	}
 }
 

@@ -3,6 +3,7 @@ var bodyparser = require("body-parser");
 var authModule = require("./authModule.js");
 var crypto = require("./crypto.js");
 var dbManager = require("./database_manager.js");
+var modif = require("./modificationModule.js");
 var fs = require("fs");
 
 //Creamos una instancia del servidor
@@ -65,29 +66,9 @@ router.route("/api/recontarVotacion").get((request, response) => {
 		var token = request.query.token;
 		var idVotacion = request.query.idVotacion;
 		
-		//Hacer la petición al módulo que nos dé los votos de la encuesta y recontarlos
+		//TODO
+		response.status(HTTP_OK).json({estado: HTTP_OK, mensaje: "Recuento de votos aún pendiente de implementación"});
 		
-		//Respuesta de prueba
-		response.json({
-			estado: HTTP_OK,
-			preguntas: [
-				{id_pregunta: 0,
-				 titulo: "¿A quién va a votar en las próximas elecciones?",
-				 opciones: [
-					{id_respuesta: 0, nombre: "Mariano Rajoy", votos: 10},
-					{id_respuesta: 1, nombre: "Pdro Snchz", votos: 9},
-					{id_respuesta: 2, nombre: "Pablo Iglesias", votos: 8},
-					{id_respuesta: 3, nombre: "Albert Rivera", votos: 7}
-				]},
-				
-				{id_pregunta: 1,
-				 titulo: "¿Eres mayor de edad?",
-				 opciones: [
-					{id_respuesta: 0, nombre: "Sí", votos: 40},
-					{id_respuesta: 1, nombre: "No", votos: 30}
-				]},
-			]
-		});	
 		
 	} catch(err) {
 		console.log(err);
@@ -124,6 +105,11 @@ router.route("/api/modificarVoto").post((request, response) => {
 		var idPregunta = request.body.idPregunta;
 		var nuevoVoto = request.body.nuevoVoto;
 		
+		if(isNaN(idVotacion) || isNaN(idPregunta)) {
+			response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "Los identificadores no son válidos"});
+			return;
+		}
+		
 		//Hacer todas las comprobaciones oportunas...
 		authModule.getCredentials(token).then(data => {
 			
@@ -137,7 +123,12 @@ router.route("/api/modificarVoto").post((request, response) => {
 				}
 				
 				//El usuario tiene permisos en este punto.
-				response.json({estado: HTTP_OK, mensaje: "Voto modificado satisfactoriamente"});
+				try {
+					modif.changeVote(idVotacion, token, idPregunta, nuevoVoto);
+					response.status(HTTP_OK).json({estado: HTTP_OK, mensaje: "Voto modificado con éxito"});
+				} catch(err) {
+					response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: err});
+				}
 			}
 		});
 		
@@ -147,7 +138,7 @@ router.route("/api/modificarVoto").post((request, response) => {
 	}
 }).all(display405error);
 
-router.route("/api/eliminarVoto").delete((request, response) => {
+router.route("/api/eliminarVoto").post((request, response) => {
 	try {
 		
 		if(!request.body.token) {
@@ -181,8 +172,18 @@ router.route("/api/eliminarVoto").delete((request, response) => {
 					return;
 				}
 				
+				if(isNaN(idVotacion) || isNaN(idPregunta)) {
+					response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "Los identificadores no son válidos"});
+					return;
+				}
+				
 				//El usuario tiene permisos en este punto.
-				response.json({estado: HTTP_OK, mensaje: "Voto eliminado satisfactoriamente"});
+				try {
+					modif.deleteVote(idVotacion, token, idPregunta);
+					response.status(HTTP_OK).json({estado: HTTP_OK, mensaje: "Voto eliminado con éxito"});
+				} catch(err) {
+					response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: err});
+				}
 			}
 		});
 		
