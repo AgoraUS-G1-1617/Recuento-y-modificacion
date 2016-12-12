@@ -10,6 +10,7 @@ var server = express();
 const port = 80;
 
 const HTTP_OK = 200;
+const HTTP_CREATED = 201;
 const HTTP_BAD_REQ = 400;
 const HTTP_FORBIDDEN = 403;
 const HTTP_NOT_FOUND = 404;
@@ -209,7 +210,7 @@ router.route("/api/verVotaciones").get((request, response) => {
         
         var detallado = request.query.detallado;
         var encuestas_json = dbManager.getPolls(detallado);
-        response.status(HTTP_OK).json({estado: HTTP_OK, encuestas: encuestas_json});
+        response.status(HTTP_OK).json({estado: HTTP_OK, votaciones: encuestas_json});
         
     } catch(err) {
         console.log(err);
@@ -240,9 +241,98 @@ router.route("/api/verVotacion").get((request, response) => {
 			return;
         }
         
-        response.status(HTTP_OK).json({estado: HTTP_OK, encuesta: encuesta_json[0]});
+        response.status(HTTP_OK).json({estado: HTTP_OK, votacion: encuesta_json[0]});
         
     } catch(err) {
+        console.log(err);
+        response.status(HTTP_SERVER_ERR).json({estado: HTTP_SERVER_ERR, mensaje: "Error interno del servidor"});
+    }
+}).all(display405error);
+
+router.route("/api/crearVotacion").post((request, response) => {
+	try {
+		
+		payload = request.body;
+		
+		// Comprobar los parámetros
+		if(!param_ok(payload.titulo)) {
+			error(HTTP_BAD_REQ, "La votación debe tener un parámetro 'titulo'", response);
+			return;
+		} 
+		
+		if(!param_ok(payload.fecha_cierre)) {
+			error(HTTP_BAD_REQ, "La votación debe tener un parámetro 'fecha_cierre'", response);
+			return;
+		} 
+		
+		if(!/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/.test(payload.fecha_cierre)) {
+			error(HTTP_BAD_REQ, "La fecha de cierre debe tener formato YYYY-MM-DD HH:MM:SS", response);
+			return;
+		}
+		
+		var closeDate = Date.parse(payload.fecha_cierre);
+		if(isNaN(closeDate)) {
+			error(HTTP_BAD_REQ, "La fecha de cierre no es válida", response);
+			return;
+		}
+		
+		if(closeDate - (new Date()) < 0) {
+			error(HTTP_BAD_REQ, "La fecha de cierre debe estar en el futuro", response);
+			return;
+		}
+			
+		
+		if(payload.preguntas === undefined || !(payload.preguntas instanceof Array)) {
+			error(HTTP_BAD_REQ, "La votación debe tener un parámetro 'preguntas' que debe ser un array", response);
+			return;
+		}
+		
+		if(payload.preguntas.length == 0) {
+			error(HTTP_BAD_REQ, "El array de preguntas debe contener al menos una pregunta", response);
+			return;
+		}
+		
+		for(var i = 0; i < payload.preguntas.length; i++) {
+			var pregunta = payload.preguntas[i];
+			if(typeof pregunta != "object") {
+				error(HTTP_BAD_REQ, "El elemento número " + (i+1) + " del array de preguntas no es válido", response);
+				return;
+			}
+			
+			if(!param_ok(pregunta.texto_pregunta)) {
+				error(HTTP_BAD_REQ, "La pregunta número " + (i+1) + " debe contener un atributo 'texto_pregunta' válido.", response);
+				return;
+			}
+			
+			if(!param_ok(pregunta.multirespuesta) || typeof pregunta.multirespuesta != "boolean") {
+				error(HTTP_BAD_REQ, "La pregunta número " + (i+1) + " debe contener un atributo 'multirespuesta' de tipo boolean.", response);
+				return;
+			}
+			
+			if(pregunta.opciones === undefined || !(pregunta.opciones instanceof Array)) {
+				error(HTTP_BAD_REQ, "La pregunta número " + (i+1) + " debe contener un parámetro 'opciones' que debe ser un array", response);
+				return;
+			}
+		
+			if(pregunta.opciones.length == 0) {
+				error(HTTP_BAD_REQ, "El array del opciones de la pregunta número " + (i+1) + " debe contener al menos una opción", response);
+				return;
+			}
+			
+			for(var j = 0; j < pregunta.opciones.length; j++) {
+				if(typeof pregunta.opciones[j] != "string") {
+					error(HTTP_BAD_REQ, "La opción " + (j+1) + " de la pregunta " + (i+1) + " no es válida (debe ser un String)", response);
+					return;
+				}
+			}
+		}
+		
+		//Si hemos llegado hasta aquí está todo correcto, crear la votación
+		var idVotacionCreada = dbManager.createPoll(payload);
+		response.status(HTTP_CREATED).json({estado: HTTP_CREATED, mensaje: "Votación creada correctamente", id_votacion: idVotacionCreada});
+		
+		
+	} catch(err) {
         console.log(err);
         response.status(HTTP_SERVER_ERR).json({estado: HTTP_SERVER_ERR, mensaje: "Error interno del servidor"});
     }
@@ -278,4 +368,12 @@ function display405error(request, response) {
 
 function display404error(request, response) {
 	response.status(HTTP_NOT_FOUND).json({estado: HTTP_NOT_FOUND, mensaje: "Metodo no encontrado"});
+}
+
+function error(code, msg, response) {
+	response.status(code).json({estado: code, mensaje: msg}).end();
+}
+
+function param_ok(param) {
+	return param !== undefined && (typeof param != "string" || param.length > 0);
 }
