@@ -2,6 +2,7 @@
 var bodyparser = require("body-parser");
 var authModule = require("./authModule.js");
 var crypto = require("./crypto.js");
+var dbManager = require("./database_manager.js");
 var fs = require("fs");
 
 //Creamos una instancia del servidor
@@ -37,6 +38,16 @@ if(pubKeyExists && !privKeyExists) {
 	crypto.generateKeypair();
 } 
 //else: existen las dos, todo OK
+
+///////////////////////////////////////////////////////////////////////
+/////////////////////// COMPROBAR BASE DATOS //////////////////////////
+///////////////////////////////////////////////////////////////////////
+
+if(!fs.existsSync("db/database.db")) {
+	console.log("Base de datos no encontrada, creando una nueva...");
+	dbManager.createDB();
+	dbManager.populateDB();
+}
 
 ///////////////////////////////////////////////////////////////////////
 /////////////////////   MÉTODOS DE LA API /////////////////////////////

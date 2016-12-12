@@ -1,5 +1,4 @@
-﻿var db = require('node-localdb');
-var now = new Date();
+﻿var now = new Date();
 var database = require("./database_manager");
 now.setHours(now.getHours() + 1);
 var errorMessage = "";
