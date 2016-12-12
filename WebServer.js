@@ -204,7 +204,7 @@ router.route("/api/clavePublica").get((request, response) => {
 	
 }).all(display405error);
 
-router.route("/api/verEncuestas").get((request, response) => {
+router.route("/api/verVotaciones").get((request, response) => {
     try {
         
         var detallado = request.query.detallado;
@@ -217,7 +217,7 @@ router.route("/api/verEncuestas").get((request, response) => {
     }
 }).all(display405error);
 
-router.route("/api/verEncuesta").get((request, response) => {
+router.route("/api/verVotacion").get((request, response) => {
     try {
         
         if(!request.query.idVotacion) {
