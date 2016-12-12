@@ -204,6 +204,50 @@ router.route("/api/clavePublica").get((request, response) => {
 	
 }).all(display405error);
 
+router.route("/api/verEncuestas").get((request, response) => {
+    try {
+        
+        var detallado = request.query.detallado;
+        var encuestas_json = dbManager.getPolls(detallado);
+        response.status(HTTP_OK).json({estado: HTTP_OK, encuestas: encuestas_json});
+        
+    } catch(err) {
+        console.log(err);
+        response.status(HTTP_SERVER_ERR).json({estado: HTTP_SERVER_ERR, mensaje: "Error interno del servidor"});
+    }
+}).all(display405error);
+
+router.route("/api/verEncuesta").get((request, response) => {
+    try {
+        
+        if(!request.query.idVotacion) {
+            response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "No se ha proporcionado el ID de la votacion"});
+			return;
+        }
+        
+        var idVotacion = request.query.idVotacion;
+        
+        if(isNaN(idVotacion)) {
+            response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "El ID de la votacion no es un valor valido"});
+			return;
+        }
+        
+        var detallado = request.query.detallado;
+        var encuesta_json = dbManager.getPolls(detallado, idVotacion);
+        
+        if(encuesta_json.length == 0) {
+            response.status(HTTP_NOT_FOUND).json({estado: HTTP_NOT_FOUND, mensaje: "No existe ninguna votacion con esa ID"});
+			return;
+        }
+        
+        response.status(HTTP_OK).json({estado: HTTP_OK, encuesta: encuesta_json[0]});
+        
+    } catch(err) {
+        console.log(err);
+        response.status(HTTP_SERVER_ERR).json({estado: HTTP_SERVER_ERR, mensaje: "Error interno del servidor"});
+    }
+}).all(display405error);
+
 ///////////////////////////////////////////////////////////////////////
 ///////////////////// MOSTRAR FORMULARIO HTML /////////////////////////
 ///////////////////////////////////////////////////////////////////////

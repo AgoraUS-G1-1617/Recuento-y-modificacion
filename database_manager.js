@@ -115,15 +115,21 @@ function getOpcionesPregunta(idPregunta) {
 	return opciones;
 }
 
-
-function getPolls(detailed) {
+function getPolls(detailed, pollId) {
 	//Si detailed es true, devolver toda la información (incluyendo preguntas y opciones)
 	//Si no, sólo la información básica de la encuesta
 	
 	command = "SELECT id AS id_votacion, titulo, fecha_creacion, fecha_cierre FROM votaciones";
 	
 	connect();
-	var votaciones = db.run(command);
+    
+    if(pollId) {
+        command += " WHERE id = ?";
+        var votaciones = db.run(command, [pollId]);
+    } else {
+        var votaciones = db.run(command);
+    }
+	
 	db.close();
 	
 	if(detailed) {
