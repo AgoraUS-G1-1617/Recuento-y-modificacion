@@ -195,6 +195,7 @@ function findPreguntaById(preguntaId){
 	return pregunta[0];
 };
 
+
 function findOpcionById(opcionId){
 	
 	command = "SELECT * from opciones where id = ?";

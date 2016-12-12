@@ -95,12 +95,15 @@ var checkIntegridadPregunta = function(pollId, preguntaId){
 *return: modificación del voto indicado
 */
 
-var changeVote = function(pollId, userToken, preguntaId, options){
+var changeVote = function(userToken, preguntaId, options){
 	console.log("Iniciando modificación de votos");
 	console.log("Comprobando integridad de encuesta");
-	if(checkSurvey(pollId)){
+	
+	var pregunta = database.findPreguntaById(preguntaId);
+	
+	if(checkSurvey(pregunta.id_votacion)){
 
-		if(checkIntegridadPregunta(pollId, preguntaId)){
+		if(checkIntegridadPregunta(pregunta.id_votacion, preguntaId) && pregunta != undefined){
 			console.log("Procediendo a realizar la modificación");
 		
 			var voto = database.getVoteByUserAndPregunta(userToken, preguntaId);
@@ -135,11 +138,14 @@ var changeVote = function(pollId, userToken, preguntaId, options){
 *return voto eliminado
 */
 
-var deleteVote = function(pollId, userToken, preguntaId){
+var deleteVote = function(userToken, preguntaId){
 	console.log("Iniciando borrado del voto");
-	if(checkSurvey(pollId)){
+	
+	var pregunta = database.findPreguntaById(preguntaId);
+	
+	if(checkSurvey(pregunta.id_votacion)){
 		
-		if(checkIntegridadPregunta(pollId, preguntaId)){
+		if(checkIntegridadPregunta(pregunta.id_votacion, preguntaId) && pregunta != undefined){
 			
 			try{
 				var vote = database.getVoteByUserAndPregunta(userToken, preguntaId);
@@ -241,31 +247,31 @@ var checkSurveyTestNegative = function(){
 
 //Test: cambiar voto
 var changeVoteTestPositive = function(){
-	var pollId = 2;
+	
 	var userToken = "BBB222";
 	var preguntaId = 2;
 	var options = database.getOpcionesPregunta(preguntaId);
 	
-	return changeVote(pollId, userToken, preguntaId, options);
+	return changeVote(userToken, preguntaId, options);
 };
 
 var changeVoteTestNegative = function(){
-	var pollId = 2;
+	
 	var userToken = "BBB222";
 	var preguntaId = 1;
 	var options = database.getOpcionesPregunta(preguntaId);
 	
-	return changeVote(pollId, userToken, preguntaId, options);
+	return changeVote(userToken, preguntaId, options);
 };
 
 
 //Test: eliminar voto
 var deleteVoteTestPositive = function(){
-	var pollId = 2;
+	
 	var userToken = "BBB222";
 	var preguntaId = 2;
 	
-	return deleteVote(pollId, userToken, preguntaId);
+	return deleteVote(userToken, preguntaId);
 };
 
 exports.deleteVoteTestPositive = deleteVoteTestPositive;
