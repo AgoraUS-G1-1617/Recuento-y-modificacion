@@ -48,6 +48,12 @@ describe("Tests unitarios módulo modificación", function(){
 		
 	});
 	
+	it("Añadir voto (Satisfactorio)", function(){
+		var result = modif.addVoteTest();
+		expect(result).not.to.be.undefined;
+		
+	});
+	
 	it("Modificación de voto (Satisfactorio)", function(){
 		var result = modif.changeVoteTestPositive();
 		expect(result).not.to.be.undefined;

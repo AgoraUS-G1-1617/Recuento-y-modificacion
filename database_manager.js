@@ -116,8 +116,9 @@ function createPoll(data) {
 function addVote(tokenUser, idPregunta, voto) {
 	connect();
 	var idNewVote = db.insert("votos", { token_user: tokenUser, id_pregunta: idPregunta, opcion: voto });
+	console.log(idNewVote)
 	db.close();
-	return newIdVote();
+	return idNewVote;
 }
 
 function getPreguntasVotacion(idVotacion) {

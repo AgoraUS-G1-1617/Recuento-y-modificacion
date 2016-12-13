@@ -1,5 +1,6 @@
 ﻿var now = new Date();
 var database = require("./database_manager");
+const crypto = require("./crypto.js");
 now.setHours(now.getHours() + 1);
 var errorMessage = "";
 var surveyState;
@@ -87,10 +88,32 @@ var checkIntegridadPregunta = function(pollId, preguntaId){
 	return true;
 };
 
+//Añadir voto
+/*
+*Necesario: idPregunta, voto
+*
+*return: voto
+*/
+
+var addVote = function(preguntaId, voto){
+	console.log("Añadiendo voto");
+	var pregunta = database.findPreguntaById(preguntaId);
+	console.log(pregunta);
+	
+	if(checkSurvey(pregunta.id_votacion) && database.getVoteByUserAndPregunta(voto.token_user, preguntaId) == undefined){
+		return database.addVote(voto.token_user, preguntaId, voto.opcion);
+		
+	}else{
+		throw "Pregunta incorrecta o el usuario ya ha votado";
+	};
+};
+
+
+//addVote(2,voto);
 
 //Modificacion del voto
 /*
-*Necesario encuesta, token de voto y token de opción de voto
+*Necesario token de voto y token de opción de voto
 *
 *return: modificación del voto indicado
 */
@@ -244,6 +267,15 @@ var checkSurveyTestNegative = function(){
 	
 };
 
+//Test: añadir voto
+var addVoteTest = function(){
+	var userToken = "AAA111";
+	var idPregunta = 2;
+	var voto = { token_user: userToken, id_pregunta: idPregunta, opcion: crypto.encrypt("prueba") };
+	
+	return addVote(idPregunta, voto);
+};
+
 
 //Test: cambiar voto
 var changeVoteTestPositive = function(){
@@ -270,7 +302,7 @@ var deleteVoteTestPositive = function(){
 	
 	var userToken = "BBB222";
 	var preguntaId = 2;
-	
+	var voto = {token_user: "AAA111", id_pregunta: 2, opcion: crypto.encrypt("prueba") };
 	return deleteVote(userToken, preguntaId);
 };
 
@@ -284,3 +316,5 @@ exports.checkPermissionsTestNegative = checkPermissionsTestNegative;
 exports.checkPermissionsTestPositive = checkPermissionsTestPositive;
 exports.deleteVote = deleteVote;
 exports.changeVote = changeVote;
+exports.addVoteTest = addVoteTest;
+exports.addVote = addVote;
