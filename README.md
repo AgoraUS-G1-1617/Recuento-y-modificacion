@@ -68,7 +68,7 @@ Las respuestas incluyen un campo *estado* que indica el código de estado HTTP a
 	idPregunta=2
 	voto=<voto encriptado>
 	```
-    - Respuesta: `{"estado": 200,  "mensaje": "Voto emitido con éxito"}`
+    - Respuesta: `{"estado": 201,  "mensaje": "Voto emitido con éxito"}`
     
 ### Modificar votos
 - URL: `(POST) URL_BASE/api/modificarVoto`
@@ -108,7 +108,7 @@ Las respuestas incluyen un campo *estado* que indica el código de estado HTTP a
     - Petición: `(GET) http://URL_BASE/api/recontarVotacion?idVotacion=2`
     - Respuesta: Aún por implementar
     
- ### Consultar una votación
+### Consultar una votación
  - URL: `(GET) URL_BASE/api/verVotacion`
  - Parámetros:
     - **idVotacion**: Obligatorio. ID de la votación sobre la cual obtener información.

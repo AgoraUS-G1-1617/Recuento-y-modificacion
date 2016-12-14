@@ -126,7 +126,7 @@ router.route("/api/emitirVoto").post((request, response) => {
 				//El usuario tiene permisos en este punto.
 				try {
 					modif.addVote(idPregunta, {token_user: token, opcion: voto});
-					response.status(HTTP_OK).json({estado: HTTP_OK, mensaje: "Voto emitido con éxito"});
+					response.status(HTTP_CREATED).json({estado: HTTP_CREATED, mensaje: "Voto emitido con éxito"});
 				} catch(err) {
 					response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: err});
 				}
