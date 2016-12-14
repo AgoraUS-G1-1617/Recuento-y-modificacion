@@ -212,7 +212,7 @@ function updateVote(voteId, opcion){
 	
 	connect();
 	
-	var update = db.update("votos",{opcion: opcion},{id:voteId});
+	var update = db.update("votos",{opcion: opcion, fecha: formatDate(new Date())},{id:voteId});
 	db.close();
 	
 	return update;

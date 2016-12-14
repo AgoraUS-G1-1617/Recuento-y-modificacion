@@ -98,18 +98,22 @@ var checkIntegridadPregunta = function(pollId, preguntaId){
 var addVote = function(preguntaId, voto){
 	console.log("Añadiendo voto");
 	var pregunta = database.findPreguntaById(preguntaId);
-	console.log(pregunta);
+    
+    if(!pregunta) {
+        throw "La pregunta indicada no existe";
+    }
+    
+    if(!checkSurvey(pregunta.id_votacion)) {
+        throw "La encuesta ya ha finalizado";
+    }
 	
-	if(checkSurvey(pregunta.id_votacion) && database.getVoteByUserAndPregunta(voto.token_user, preguntaId) == undefined){
-		return database.addVote(voto.token_user, preguntaId, voto.opcion);
-		
+	if(database.getVoteByUserAndPregunta(voto.token_user, preguntaId) === undefined){
+		return database.addVote(voto.token_user, preguntaId, voto.opcion);	
 	}else{
 		throw "Pregunta incorrecta o el usuario ya ha votado";
-	};
+	}
 };
 
-
-//addVote(2,voto);
 
 //Modificacion del voto
 /*
@@ -123,6 +127,10 @@ var changeVote = function(userToken, preguntaId, options){
 	console.log("Comprobando integridad de encuesta");
 	
 	var pregunta = database.findPreguntaById(preguntaId);
+    
+    if(!pregunta) {
+        throw "La pregunta indicada no existe";
+    }
 	
 	if(checkSurvey(pregunta.id_votacion)){
 
@@ -132,7 +140,7 @@ var changeVote = function(userToken, preguntaId, options){
 			var voto = database.getVoteByUserAndPregunta(userToken, preguntaId);
 
 			if(!voto) {
-				throw "El usuario no ha votado aún en esa pregunta, por lo que no se puede modificar";
+				throw "El usuario no ha votado aún en esa pregunta, por lo que no se puede modificar el voto";
 				return false;
 			}
 			database.updateVote(voto.id, options);
@@ -165,6 +173,10 @@ var deleteVote = function(userToken, preguntaId){
 	console.log("Iniciando borrado del voto");
 	
 	var pregunta = database.findPreguntaById(preguntaId);
+    
+    if(!pregunta) {
+        throw "La pregunta indicada no existe";
+    }
 	
 	if(checkSurvey(pregunta.id_votacion)){
 		

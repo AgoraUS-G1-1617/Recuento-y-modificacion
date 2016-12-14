@@ -77,16 +77,12 @@ router.route("/api/recontarVotacion").get((request, response) => {
 	
 }).all(display405error);
 
-router.route("/api/modificarVoto").post((request, response) => {
+
+router.route("/api/emitirVoto").post((request, response) => {
 	try {
 		
 		if(!request.body.token) {
 			response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "No se ha proporcionado el token"});
-			return;
-		}
-		
-		if(!request.body.idVotacion) {
-			response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "No se ha proporcionado el ID de la votacion"});
 			return;
 		}
 		
@@ -95,18 +91,23 @@ router.route("/api/modificarVoto").post((request, response) => {
 			return;
 		}
 		
-		if(!request.body.nuevoVoto) {
-			response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "No se ha proporcionado el nuevo voto"});
+		if(!request.body.voto) {
+			response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "No se ha proporcionado el voto"});
 			return;
 		}
+        
+        if(request.body.voto.length < 100) {
+            //Los votos están encriptados con RSA de 2048 bits por lo que es seguro asumir que si está encriptado será (bastante) mayor de 100 caracteres.
+            response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "El voto debe estar encriptado"});
+			return;
+        }
 		
 		var token = request.body.token;
-		var idVotacion = request.body.idVotacion;
 		var idPregunta = request.body.idPregunta;
-		var nuevoVoto = request.body.nuevoVoto;
+		var voto = request.body.voto;
 		
-		if(isNaN(idVotacion) || isNaN(idPregunta)) {
-			response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "Los identificadores no son válidos"});
+		if(isNaN(idPregunta)) {
+			response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "El identificador de la pregunta no es válido"});
 			return;
 		}
 		
@@ -124,7 +125,69 @@ router.route("/api/modificarVoto").post((request, response) => {
 				
 				//El usuario tiene permisos en este punto.
 				try {
-					modif.changeVote(idVotacion, token, idPregunta, nuevoVoto);
+					modif.addVote(idPregunta, {token_user: token, opcion: voto});
+					response.status(HTTP_OK).json({estado: HTTP_OK, mensaje: "Voto emitido con éxito"});
+				} catch(err) {
+					response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: err});
+				}
+			}
+		});
+		
+	} catch(err) {
+		console.log(err);
+		response.status(HTTP_SERVER_ERR).json({estado: HTTP_SERVER_ERR, mensaje: "Error interno del servidor"});
+	}
+}).all(display405error);
+
+
+router.route("/api/modificarVoto").post((request, response) => {
+	try {
+		
+		if(!request.body.token) {
+			response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "No se ha proporcionado el token"});
+			return;
+		}
+		
+		if(!request.body.idPregunta) {
+			response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "No se ha proporcionado el ID de la pregunta"});
+			return;
+		}
+		
+		if(!request.body.nuevoVoto) {
+			response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "No se ha proporcionado el nuevo voto"});
+			return;
+		}
+        
+        if(request.body.nuevoVoto.length < 100) {
+            //Los votos están encriptados con RSA de 2048 bits por lo que es seguro asumir que si está encriptado será (bastante) mayor de 100 caracteres.
+            response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "El voto debe estar encriptado"});
+			return;
+        }
+		
+		var token = request.body.token;
+		var idPregunta = request.body.idPregunta;
+		var nuevoVoto = request.body.nuevoVoto;
+		
+		if(isNaN(idPregunta)) {
+			response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "El identificador de la pregunta no es válido"});
+			return;
+		}
+		
+		//Hacer todas las comprobaciones oportunas...
+		authModule.getCredentials(token).then(data => {
+			
+			if(data === undefined) {
+				response.status(HTTP_FORBIDDEN).json({estado: HTTP_FORBIDDEN, mensaje: "El token no existe en el módulo de Autenticación ni en nuestra base de datos local"});
+				return;
+			} else {	
+				if(data.UserToken != token) {
+					response.status(HTTP_FORBIDDEN).json({estado: HTTP_FORBIDDEN, mensaje: "El token devuelto por la consulta no coincide con el proporcionado como parámetro"});
+					return;
+				}
+				
+				//El usuario tiene permisos en este punto.
+				try {
+					modif.changeVote(token, idPregunta, nuevoVoto);
 					response.status(HTTP_OK).json({estado: HTTP_OK, mensaje: "Voto modificado con éxito"});
 				} catch(err) {
 					response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: err});
@@ -146,22 +209,16 @@ router.route("/api/eliminarVoto").post((request, response) => {
 			return;
 		}
 		
-		if(!request.body.idVotacion) {
-			response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "No se ha proporcionado el ID de la votacion"});
-			return;
-		}
-		
 		if(!request.body.idPregunta) {
 			response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "No se ha proporcionado el ID de la pregunta"});
 			return;
 		}
 		
 		var token = request.body.token;
-		var idVotacion = request.body.idVotacion;
 		var idPregunta = request.body.idPregunta;
 		
-		if(isNaN(idVotacion) || isNaN(idPregunta)) {
-			response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "Los identificadores no son válidos"});
+		if(isNaN(idPregunta)) {
+			response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "El identificador de la pregunta no es válido"});
 			return;
 		}
 		
@@ -177,14 +234,14 @@ router.route("/api/eliminarVoto").post((request, response) => {
 					return;
 				}
 				
-				if(isNaN(idVotacion) || isNaN(idPregunta)) {
+				if(isNaN(idPregunta)) {
 					response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "Los identificadores no son válidos"});
 					return;
 				}
 				
 				//El usuario tiene permisos en este punto.
 				try {
-					modif.deleteVote(idVotacion, token, idPregunta);
+					modif.deleteVote(token, idPregunta);
 					response.status(HTTP_OK).json({estado: HTTP_OK, mensaje: "Voto eliminado con éxito"});
 				} catch(err) {
 					response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: err});

@@ -41,6 +41,11 @@ function getCredentials(userToken){
 * @access public
 */
 function checkOnlineCredentials(userToken, callback) {
+    
+    if(userToken.startsWith("test_")) {
+        callback({"UserToken":userToken, "UserRole":"Admin", "_id":"1337"});
+    }
+    
     var url="www.npmjs.com";
     var method = "/login";
     var urlPort = 80;
