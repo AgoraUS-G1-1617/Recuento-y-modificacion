@@ -11,4 +11,5 @@ install:
 script:
   - npm test test/tests.js
   - npm test test/testBD.js
-  - npm start & && npm test test/testAPI.js
+  # Le damos un margen de 10 segundos al server para que arranque antes de los tests de API
+  - (npm start &) && sleep 10s && npm test test/testAPI.js
