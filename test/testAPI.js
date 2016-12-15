@@ -13,7 +13,7 @@ describe("Tests de la API", function() {
 		
 		it("Consultar todas las votaciones", function() {
 			expect(() => {
-				var res = req2obj("http://localhost/api/verVotaciones", "GET");
+				var res = req2obj("/api/verVotaciones", "GET");
 				expect(res.estado).to.equal(200);
 				var votaciones = res.votaciones;
 				expect(votaciones.length > 0).to.be.true;
@@ -25,7 +25,7 @@ describe("Tests de la API", function() {
 		
 		it("Consultar todas las votaciones con detalle", function() {
 			expect(() => {
-				var res = req2obj("http://localhost/api/verVotaciones?detallado=si", "GET");
+				var res = req2obj("/api/verVotaciones?detallado=si", "GET");
 				expect(res.estado).to.equal(200);
 				var votaciones = res.votaciones;
 				expect(votaciones.length > 0).to.be.true;
@@ -37,7 +37,7 @@ describe("Tests de la API", function() {
 		
 		it("Consultar una votación existente", function() {
 			expect(() => {
-				var res = req2obj("http://localhost/api/verVotacion?idVotacion=1", "GET");
+				var res = req2obj("/api/verVotacion?idVotacion=1", "GET");
 				expect(res.estado).to.equal(200);
 				var votacion = res.votacion;
 				expect(votacion).to.be.ok;
@@ -47,7 +47,7 @@ describe("Tests de la API", function() {
 		
 		it("Consultar una votación existente con detalle", function() {
 			expect(() => {
-				var res = req2obj("http://localhost/api/verVotacion?idVotacion=1&detallado=si", "GET");
+				var res = req2obj("/api/verVotacion?idVotacion=1&detallado=si", "GET");
 				expect(res.estado).to.equal(200);
 				var votacion = res.votacion;
 				expect(votacion).to.be.ok;
@@ -57,21 +57,21 @@ describe("Tests de la API", function() {
 		
 		it("Consultar una votación inexistente", function() {
 			expect(() => {
-				var res = req2obj("http://localhost/api/verVotacion?idVotacion=19999", "GET");
+				var res = req2obj("/api/verVotacion?idVotacion=19999", "GET");
 				expect(res.estado).to.equal(404);
 			}).to.not.throw("");
 		});
 		
 		it("Consultar una votación con ID no válido", function() {
 			expect(() => {
-				var res = req2obj("http://localhost/api/verVotacion?idVotacion=abcdef", "GET");
+				var res = req2obj("/api/verVotacion?idVotacion=abcdef", "GET");
 				expect(res.estado).to.equal(400);
 			}).to.not.throw("");
 		});
 		
 		it("Consultar una votación sin especificar ID", function() {
 			expect(() => {
-				var res = req2obj("http://localhost/api/verVotacion", "GET");
+				var res = req2obj("/api/verVotacion", "GET");
 				expect(res.estado).to.equal(400);
 			}).to.not.throw("");
 		});
@@ -82,7 +82,7 @@ describe("Tests de la API", function() {
 });
 
 function req2obj(url, method, options) {
-	var response = request(method, url + (process.env.TRAVIS ? ":8080" : ""), options);
+	var response = request(method, "http://localhost" + (process.env.TRAVIS ? ":8080" : "") + url, options);
 	try {
 		return JSON.parse(response.getBody("utf-8"));
 	} catch(err) {
