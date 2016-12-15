@@ -11,4 +11,5 @@ install:
 script:
   - npm test test/tests.js
   - npm test test/testBD.js
+  # Borramos la BD para que se regenere en el arranque del servidor
   - rm $TRAVIS_BUILD_DIR/db/database.db && npm start
