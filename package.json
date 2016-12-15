@@ -12,7 +12,8 @@
     "mocha": "^3.2.0",
     "node-localdb": "0.0.3",
     "request": "^2.79.0",
-    "sqlite-sync": "^0.3.6"
+    "sqlite-sync": "^0.3.6",
+    "sync-request": "^3.0.1"
   },
   "devDependencies": {},
   "scripts": {
