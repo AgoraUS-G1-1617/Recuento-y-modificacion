@@ -15,7 +15,8 @@ function createDB() {
 						"id INTEGER PRIMARY KEY AUTOINCREMENT," +
 						"titulo TEXT NOT NULL," +
 						"fecha_creacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP," +
-						"fecha_cierre DATETIME NOT NULL" +
+						"fecha_cierre DATETIME NOT NULL," +
+						"cp TEXT NOT NULL CHECK(length(cp) == 5)" +
 					");" +
 					
 					"CREATE TABLE preguntas (" +
@@ -61,8 +62,8 @@ function populateDB() {
 	var futureDate = formatDate(new Date(now.getTime() + 30 * 24 * 3600 * 1000)); //1 mes en el futuro
 	now = formatDate(now);
 	
-	var idVotacionTortilla = db.insert("votaciones", { titulo: "Votación definitiva sobre la tortilla de patatas", fecha_creacion: now, fecha_cierre: futureDate });
-	var idVotacionElecciones = db.insert("votaciones", { titulo: "Encuesta sobre intención de voto", fecha_creacion: now, fecha_cierre: futureDate });
+	var idVotacionTortilla = db.insert("votaciones", { titulo: "Votación definitiva sobre la tortilla de patatas", fecha_creacion: now, fecha_cierre: futureDate, cp: "41008" });
+	var idVotacionElecciones = db.insert("votaciones", { titulo: "Encuesta sobre intención de voto", fecha_creacion: now, fecha_cierre: futureDate, cp: "01337" });
 	
 	var idPregunta1Tortilla = db.insert("preguntas", { texto_pregunta: "¿Prefiere Ud. la tortilla con o sin cebolla?", multirespuesta: false, id_votacion: idVotacionTortilla});
 	var idPregunta1Elecciones = db.insert("preguntas", { texto_pregunta: "¿A qué políticos votaría Ud.?", multirespuesta: true, id_votacion: idVotacionElecciones });
@@ -95,7 +96,7 @@ function createPoll(data) {
 	var now = formatDate(new Date());
 	
 	connect();
-	var idCreated = db.insert("votaciones", { titulo: data.titulo, fecha_creacion: now, fecha_cierre: data.fecha_cierre });
+	var idCreated = db.insert("votaciones", { titulo: data.titulo, fecha_creacion: now, fecha_cierre: data.fecha_cierre, cp: data.cp });
 	var preguntas = data.preguntas;
 	
 	for(var i = 0; i < preguntas.length; i++) {
@@ -141,7 +142,7 @@ function getPolls(detailed, pollId) {
 	//Si detailed es true, devolver toda la información (incluyendo preguntas y opciones)
 	//Si no, sólo la información básica de la encuesta
 	
-	command = "SELECT id AS id_votacion, titulo, fecha_creacion, fecha_cierre FROM votaciones";
+	command = "SELECT id AS id_votacion, titulo, fecha_creacion, fecha_cierre, cp FROM votaciones";
 	
 	connect();
     
@@ -176,7 +177,7 @@ function getPolls(detailed, pollId) {
 
 function findPollById(pollId){
 	
-	command = "SELECT id AS id_votacion, titulo, fecha_creacion, fecha_cierre FROM votaciones where id = ?";
+	command = "SELECT id AS id_votacion, titulo, fecha_creacion, fecha_cierre, cp FROM votaciones where id = ?";
 	
 	connect();
 	var poll = db.run(command, [pollId]);

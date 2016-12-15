@@ -115,7 +115,7 @@ Las respuestas incluyen un campo *estado* que indica el código de estado HTTP a
     - **detallado**: Opcional. Si se incluye, añade a la información básica de la encuesta las preguntas de cada una y las opciones de cada pregunta. Puede tener cualquier valor.
  - Ejemplo de uso:
     - Petición: `(GET) http://URL_BASE/api/verVotacion?idVotacion=1&detallado=si`
-    - Respuesta: ```{"estado":200,"votacion":{"id_votacion":1,"titulo":"Votación definitiva sobre la tortilla de patatas","fecha_creacion":"2016-12-12 20:39:41","fecha_cierre":"2017-01-11 20:39:41","preguntas":[{"id_pregunta":1,"texto_pregunta":"¿Prefiere Ud. la tortilla con o sin cebolla?","multirespuesta":"false","opciones":[{"id_opcion":1,"texto_opcion":"Sin cebolla, y además me gusta devorar gatitos indefensos."},{"id_opcion":2,"texto_opcion":"Con cebolla, y además rescato a los gatitos abandonados."}]}]}}```
+    - Respuesta: ```{"estado":200,"votacion":{"id_votacion":1,"titulo":"Votación definitiva sobre la tortilla de patatas","cp":"12345","fecha_creacion":"2016-12-12 20:39:41","fecha_cierre":"2017-01-11 20:39:41","preguntas":[{"id_pregunta":1,"texto_pregunta":"¿Prefiere Ud. la tortilla con o sin cebolla?","multirespuesta":"false","opciones":[{"id_opcion":1,"texto_opcion":"Sin cebolla, y además me gusta devorar gatitos indefensos."},{"id_opcion":2,"texto_opcion":"Con cebolla, y además rescato a los gatitos abandonados."}]}]}}```
     
 ### Consultar todas las votaciones
  - URL: `(GET) URL_BASE/api/verVotaciones`
@@ -128,7 +128,7 @@ Las respuestas incluyen un campo *estado* que indica el código de estado HTTP a
   - URL: `(POST) URL_BASE/api/crearVotacion`
   - Parámetros: El cuerpo de la petición POST debe contener la representación JSON de la votación a crear tal y como se devuelve en los dos métodos anteriores, con un par de cambios: no es necesario incluir ID's (ya que lógicamente no tienen ninguno al estar creando una nueva) y las opciones deben ser simplemente un array de Strings.
   - Ejemplo de uso:
-    - Cuerpo de la petición: ```{"titulo":"Votación definitiva sobre la tortilla de patatas","fecha_cierre":"2017-12-12 13:37:00","preguntas":[{"texto_pregunta":"Pregunta 1","multirespuesta":false,"opciones":["Opción 1 pregunta 1","Opción 2 pregunta 1"]},{"texto_pregunta":"Pregunta 2","multirespuesta":false,"opciones":["Opción 2 pregunta 1","Opción 2 pregunta 2"]}]}```
+    - Cuerpo de la petición: ```{"titulo":"Votación definitiva sobre la tortilla de patatas","cp":"12345","fecha_cierre":"2017-12-12 13:37:00","preguntas":[{"texto_pregunta":"Pregunta 1","multirespuesta":false,"opciones":["Opción 1 pregunta 1","Opción 2 pregunta 1"]},{"texto_pregunta":"Pregunta 2","multirespuesta":false,"opciones":["Opción 2 pregunta 1","Opción 2 pregunta 2"]}]}```
     - Respuesta:
     ```
     {

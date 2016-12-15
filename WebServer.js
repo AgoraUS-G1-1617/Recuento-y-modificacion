@@ -321,7 +321,17 @@ router.route("/api/crearVotacion").post((request, response) => {
 		if(!param_ok(payload.titulo)) {
 			error(HTTP_BAD_REQ, "La votación debe tener un parámetro 'titulo'", response);
 			return;
+		}
+		
+		if(!param_ok(payload.cp)) {
+			error(HTTP_BAD_REQ, "La votación debe tener un parámetro 'cp'", response);
+			return;
 		} 
+		
+		if(payload.cp.length != 5 || isNaN(payload.cp)) {
+			error(HTTP_BAD_REQ, "El parámetro 'cp' debe ser una cadena numérica de longitud 5", response);
+			return;
+		}
 		
 		if(!param_ok(payload.fecha_cierre)) {
 			error(HTTP_BAD_REQ, "La votación debe tener un parámetro 'fecha_cierre'", response);
