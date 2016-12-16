@@ -1,6 +1,7 @@
 ﻿var expect = require("chai").expect;
 var request = require("sync-request");
 var dbModule = require("../database_manager.js");
+var crypto = require("../crypto.js");
 
 describe("Tests de la API", function() {
 	this.timeout(30000);
@@ -78,6 +79,101 @@ describe("Tests de la API", function() {
 		
 		
 	});
+    
+    describe("Emitir votos", function() {
+    
+        it("Emitir un voto de forma correcta", function() {
+            expect(() => {
+                regenerateBD();
+                var votaciones = req2obj("/api/verVotaciones?detallado=si", "GET");
+				expect(votaciones.estado).to.equal(200);
+                var pregunta = votaciones.votaciones[0].preguntas[0];
+                var userToken = "test_travisTesting";
+                var bodyRequest = "token=" + encodeURIComponent(userToken) + "&idPregunta=" + encodeURIComponent(pregunta.id_pregunta) + "&voto=" + encodeURIComponent(crypto.encrypt(pregunta.opciones[0].id_opcion));
+                var res = req2obj("/api/emitirVoto", "POST", {body: bodyRequest, headers: {"Content-Type": "application/x-www-form-urlencoded"}});
+                expect(res.estado).to.equal(201);
+                expect(res.mensaje.length > 0).to.be.true;
+            }).to.not.throw("");    
+        });
+        
+        it("Emitir un voto sin encriptar", function() {
+            expect(() => {
+                var votaciones = req2obj("/api/verVotaciones?detallado=si", "GET");
+				expect(votaciones.estado).to.equal(200);
+                var pregunta = votaciones.votaciones[0].preguntas[0];
+                var userToken = "test_travisTesting";
+                var bodyRequest = "token=" + encodeURIComponent(userToken) + "&idPregunta=" + encodeURIComponent(pregunta.id_pregunta) + "&voto=" + encodeURIComponent(pregunta.opciones[0].id_opcion);
+                var res = req2obj("/api/emitirVoto", "POST", {body: bodyRequest, headers: {"Content-Type": "application/x-www-form-urlencoded"}});
+                expect(res.estado).to.equal(400);
+                expect(res.mensaje.length > 0).to.be.true;
+            }).to.not.throw("");    
+        });
+        
+        it("Emitir un voto sin voto", function() {
+            expect(() => {
+                var votaciones = req2obj("/api/verVotaciones?detallado=si", "GET");
+				expect(votaciones.estado).to.equal(200);
+                var pregunta = votaciones.votaciones[0].preguntas[0];
+                var userToken = "test_travisTesting";
+                var bodyRequest = "token=" + encodeURIComponent(userToken) + "&idPregunta=" + encodeURIComponent(pregunta.id_pregunta);
+                var res = req2obj("/api/emitirVoto", "POST", {body: bodyRequest, headers: {"Content-Type": "application/x-www-form-urlencoded"}});
+                expect(res.estado).to.equal(400);
+                expect(res.mensaje.length > 0).to.be.true;
+            }).to.not.throw("");    
+        });
+        
+        it("Emitir un voto sin pregunta", function() {
+            expect(() => {
+                var votaciones = req2obj("/api/verVotaciones?detallado=si", "GET");
+				expect(votaciones.estado).to.equal(200);
+                var pregunta = votaciones.votaciones[0].preguntas[0];
+                var userToken = "test_travisTesting";
+                var bodyRequest = "token=" + encodeURIComponent(userToken) + "&voto=" + encodeURIComponent(crypto.encrypt(pregunta.opciones[0].id_opcion));
+                var res = req2obj("/api/emitirVoto", "POST", {body: bodyRequest, headers: {"Content-Type": "application/x-www-form-urlencoded"}});
+                expect(res.estado).to.equal(400);
+                expect(res.mensaje.length > 0).to.be.true;
+            }).to.not.throw("");    
+        });
+        
+        it("Emitir un voto con pregunta no válida", function() {
+            expect(() => {
+                var votaciones = req2obj("/api/verVotaciones?detallado=si", "GET");
+				expect(votaciones.estado).to.equal(200);
+                var pregunta = votaciones.votaciones[0].preguntas[0];
+                var userToken = "test_travisTesting";
+                var bodyRequest = "token=" + encodeURIComponent(userToken) + "&idPregunta=100000&voto=" + encodeURIComponent(crypto.encrypt(pregunta.opciones[0].id_opcion));
+                var res = req2obj("/api/emitirVoto", "POST", {body: bodyRequest, headers: {"Content-Type": "application/x-www-form-urlencoded"}});
+                expect(res.estado).to.equal(400);
+                expect(res.mensaje.length > 0).to.be.true;
+            }).to.not.throw("");    
+        });
+        
+        it("Emitir un voto sin token", function() {
+            expect(() => {
+                var votaciones = req2obj("/api/verVotaciones?detallado=si", "GET");
+				expect(votaciones.estado).to.equal(200);
+                var pregunta = votaciones.votaciones[0].preguntas[0];
+                var bodyRequest = "idPregunta=" + encodeURIComponent(pregunta.id_pregunta) + "&voto=" + encodeURIComponent(crypto.encrypt(pregunta.opciones[0].id_opcion));
+                var res = req2obj("/api/emitirVoto", "POST", {body: bodyRequest, headers: {"Content-Type": "application/x-www-form-urlencoded"}});
+                expect(res.estado).to.equal(400);
+                expect(res.mensaje.length > 0).to.be.true;
+            }).to.not.throw("");    
+        });
+        
+        it("Emitir un voto con token no válido", function() {
+            expect(() => {
+                var votaciones = req2obj("/api/verVotaciones?detallado=si", "GET");
+				expect(votaciones.estado).to.equal(200);
+                var pregunta = votaciones.votaciones[0].preguntas[0];
+                var userToken = "tokenNoValido";
+                var bodyRequest = "token=" + encodeURIComponent(userToken) + "&idPregunta=" + encodeURIComponent(pregunta.id_pregunta) + "&voto=" + encodeURIComponent(crypto.encrypt(pregunta.opciones[0].id_opcion));
+                var res = req2obj("/api/emitirVoto", "POST", {body: bodyRequest, headers: {"Content-Type": "application/x-www-form-urlencoded"}});
+                expect(res.estado).to.equal(403);
+                expect(res.mensaje.length > 0).to.be.true;
+            }).to.not.throw("");    
+        });
+    
+    });
 	
 });
 
@@ -89,7 +185,6 @@ function req2obj(url, method, options) {
 		//Ignora los códigos de error >400 del servidor y devuelve el cuerpo de la respuesta de todos modos
 		return JSON.parse(err.body.toString("utf-8"));
 	}
-	
 }
 
 function regenerateBD() {
