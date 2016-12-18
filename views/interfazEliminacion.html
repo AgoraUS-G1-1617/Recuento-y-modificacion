@@ -7,10 +7,10 @@
 		<!--ProbarEliminarVotacion-->
 		function probarEliminarVoto(){
 			var postData = $("#eliminacion").serialize();
-			document.resultados.innerHTML = "";
+			document.getElementById('resultados').innerHTML = "";
 			$.ajax(
 				{
-					url : "api/eliminarVoto", 
+					url : "/api/eliminarVoto", 
 					type: "DELETE",
 					data : postData,
 					success:function(data, textStatus, jqXHR) 

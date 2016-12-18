@@ -8,7 +8,7 @@
 		<!--ProbarEditarVotacion-->
 		function probarModificarVoto(){
 			var postData = $("#modificacion").serialize();
-			document.resultados.innerHTML = "";
+			document.getElementById('resultados').innerHTML = "";
 			$.ajax(
 				{
 					url : "/api/modificarVoto", 

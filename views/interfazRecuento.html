@@ -6,8 +6,9 @@
 	<script>
 		<!--ProbarRecuento-->
 		function probarRecuento(){
+			document.getElementById('resultados').innerHTML = "";
 			var postData = $('#recuento').serialize();
-			document.resultados.innerHTML = "";
+			
 			$.ajax(
 				{
 					url : "/api/recontarVotacion", 
@@ -36,7 +37,8 @@
 	<form>
 	</br>
 	
-	<div id="resultados"/>
+	<div id="resultados">
+	</div>
 </body>
 </html>
 
