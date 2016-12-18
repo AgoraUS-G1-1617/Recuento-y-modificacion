@@ -1,18 +1,17 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>Formulario de recuento de votos</title>
+	<title>Formulario de eliminacion de votos</title>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 	<script>
-		<!--ProbarRecuento-->
-		function probarRecuento(){
+		<!--ProbarEliminarVotacion-->
+		function probarEliminarVoto(){
+			var postData = $("#eliminacion").serialize();
 			document.getElementById('resultados').innerHTML = "";
-			var postData = $('#recuento').serialize();
-			
 			$.ajax(
 				{
-					url : "/api/recontarVotacion", 
-					type: "GET",
+					url : "/api/eliminarVoto", 
+					type: "POST",
 					data : postData,
 					success:function(data, textStatus, jqXHR) 
 					{
@@ -20,25 +19,24 @@
 					},
 					error: function(jqXHR, textStatus, errorThrown) 
 					{
-						alert(errorThrown);
-						console.log(textStatus);
-						//if fails      
+						resultados.appendChild(document.createElement('pre')).innerHTML = JSON.stringify(jqXHR.responseJSON, null, 2);
+    
 					}
 				});
 		}
 	</script>
 </head>
 <body>
-	<form id="recuento" name="recuento" method="get">
+
+	<form id="eliminacion" name="eliminacion" method="delete">
 		Token:<input type="text" id="token" name="token"/>
 		idVotacion:<input type="text" id="idVotacion" name="idVotacion"/>
-		<input type="button" id="clickRecuento" onClick="probarRecuento();" value="Contar" />
-		
+		idPregunta:<input type="text" id="idPregunta" name="idPregunta"/>
+		<input type="button" id="Eliminar" value="Eliminar" onClick="probarEliminarVoto();"/>
 	<form>
 	</br>
 	
-	<div id="resultados">
-	</div>
+	<div id="resultados"/>
 </body>
 </html>
 

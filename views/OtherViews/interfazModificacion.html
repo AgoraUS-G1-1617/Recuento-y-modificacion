@@ -1,16 +1,17 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>Formulario de eliminacion de votos</title>
+	<title>Formulario de modificación de votos</title>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 	<script>
-		<!--ProbarEliminarVotacion-->
-		function probarEliminarVoto(){
-			var postData = $("#eliminacion").serialize();
+		
+		<!--ProbarEditarVotacion-->
+		function probarModificarVoto(){
+			var postData = $("#modificacion").serialize();
 			document.getElementById('resultados').innerHTML = "";
 			$.ajax(
 				{
-					url : "/api/eliminarVoto", 
+					url : "/api/modificarVoto", 
 					type: "POST",
 					data : postData,
 					success:function(data, textStatus, jqXHR) 
@@ -19,21 +20,19 @@
 					},
 					error: function(jqXHR, textStatus, errorThrown) 
 					{
-						alert(errorThrown);
-						console.log(textStatus);
-						//if fails      
+						resultados.appendChild(document.createElement('pre')).innerHTML = JSON.stringify(jqXHR.responseJSON, null, 2); 
 					}
 				});
 		}
 	</script>
 </head>
 <body>
-
-	<form id="eliminacion" name="eliminacion" method="delete">
+	<form id="modificacion" name="modificacion" method="post" >
 		Token:<input type="text" id="token" name="token"/>
 		idVotacion:<input type="text" id="idVotacion" name="idVotacion"/>
 		idPregunta:<input type="text" id="idPregunta" name="idPregunta"/>
-		<input type="button" id="Eliminar" value="Eliminar" onClick="probarEliminarVoto();"/>
+		nuevoVoto:<input type="text" id="nuevoVoto" name="nuevoVoto"/>
+		<input type="button" id="clickModificar" onClick="probarModificarVoto();" value="Guardar" />
 	<form>
 	</br>
 	

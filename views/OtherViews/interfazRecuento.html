@@ -1,18 +1,18 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>Formulario de modificación de votos</title>
+	<title>Formulario de recuento de votos</title>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 	<script>
-		
-		<!--ProbarEditarVotacion-->
-		function probarModificarVoto(){
-			var postData = $("#modificacion").serialize();
+		<!--ProbarRecuento-->
+		function probarRecuento(){
+			document.getElementById('resultados').innerHTML = "";
+			var postData = $('#recuento').serialize();
 			document.getElementById('resultados').innerHTML = "";
 			$.ajax(
 				{
-					url : "/api/modificarVoto", 
-					type: "POST",
+					url : "/api/recontarVotacion", 
+					type: "GET",
 					data : postData,
 					success:function(data, textStatus, jqXHR) 
 					{
@@ -20,24 +20,24 @@
 					},
 					error: function(jqXHR, textStatus, errorThrown) 
 					{
-						alert(errorThrown);
-						console.log(textStatus);   
+						resultados.appendChild(document.createElement('pre')).innerHTML = JSON.stringify(jqXHR.responseJSON, null, 2);
+						      
 					}
 				});
 		}
 	</script>
 </head>
 <body>
-	<form id="modificacion" name="modificacion" method="post" >
+	<form id="recuento" name="recuento" method="get">
 		Token:<input type="text" id="token" name="token"/>
 		idVotacion:<input type="text" id="idVotacion" name="idVotacion"/>
-		idPregunta:<input type="text" id="idPregunta" name="idPregunta"/>
-		nuevoVoto:<input type="text" id="nuevoVoto" name="nuevoVoto"/>
-		<input type="button" id="clickModificar" onClick="probarModificarVoto();" value="Guardar" />
+		<input type="button" id="clickRecuento" onClick="probarRecuento();" value="Contar" />
+		
 	<form>
 	</br>
 	
-	<div id="resultados"/>
+	<div id="resultados">
+	</div>
 </body>
 </html>
 
