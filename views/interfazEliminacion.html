@@ -7,7 +7,7 @@
 		<!--ProbarEliminarVotacion-->
 		function probarEliminarVoto(){
 			var postData = $("#eliminacion").serialize();
-			
+			document.resultados.innerHTML = "";
 			$.ajax(
 				{
 					url : "api/eliminarVoto", 
@@ -34,7 +34,6 @@
 		idVotacion:<input type="text" id="idVotacion" name="idVotacion"/>
 		idPregunta:<input type="text" id="idPregunta" name="idPregunta"/>
 		<input type="button" id="Eliminar" value="Eliminar" onClick="probarEliminarVoto();"/>
-		<input type="submit" value="Cancelar"/>
 	<form>
 	</br>
 	

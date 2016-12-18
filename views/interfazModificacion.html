@@ -8,6 +8,7 @@
 		<!--ProbarEditarVotacion-->
 		function probarModificarVoto(){
 			var postData = $("#modificacion").serialize();
+			document.resultados.innerHTML = "";
 			$.ajax(
 				{
 					url : "/api/modificarVoto", 
@@ -33,7 +34,6 @@
 		idPregunta:<input type="text" id="idPregunta" name="idPregunta"/>
 		nuevoVoto:<input type="text" id="nuevoVoto" name="nuevoVoto"/>
 		<input type="button" id="clickModificar" onClick="probarModificarVoto();" value="Guardar" />
-		<input type="submit" value="Cancelar"/>
 	<form>
 	</br>
 	

@@ -7,7 +7,7 @@
 		<!--ProbarRecuento-->
 		function probarRecuento(){
 			var postData = $('#recuento').serialize();
-			
+			document.resultados.innerHTML = "";
 			$.ajax(
 				{
 					url : "/api/recontarVotacion", 
