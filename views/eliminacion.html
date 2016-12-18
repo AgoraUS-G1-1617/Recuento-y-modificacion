@@ -15,7 +15,7 @@
 	<script type="text/javascript" src="../public/js/functions.js"></script>
 	 <script>
       function eliminacion(){
-        performAjax("formEliminacion", "/api/eliminarVoto", "DELETE", resEliminacion);
+        performAjax("formEliminacion", "/api/eliminarVoto", "POST", resEliminacion);
       }
     </script>
 </head>
@@ -62,7 +62,7 @@
                         <p>
                             En este apartado podremos eliminar un voto tras pasarle el token, id de la votación y el id de la pregunta.
                         </p>
-                        <form id="formEliminacion" name="formEliminacion" method="delete">
+                        <form id="formEliminacion" name="formEliminacion" method="post">
                             <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                                 <input class="mdl-textfield__input" type="text" id="Token" name="token">
                                 <label class="mdl-textfield__label" for="Name">Token</label>
