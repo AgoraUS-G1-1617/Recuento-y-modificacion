@@ -14,7 +14,7 @@
     <script type="text/javascript" src="../public/js/functions.js"></script>
 	<script>
 		function emitirVoto(){
-			performAjax("formEmitirVoto", "api/emitirVoto", "POST", res);
+			performAjax("formEmitirVoto", "/api/emitirVoto", "POST", res);
 		}
 	</script>
 </head>
@@ -63,15 +63,15 @@
                         </p>
                         <form id="formEmitirVoto" name="formEmitirVoto" method="post">
                             <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                                <input class="mdl-textfield__input" type="text" id="Token">
+                                <input class="mdl-textfield__input" type="text" id="Token" name="token">
                                 <label class="mdl-textfield__label" for="Token">Token</label>
                             </div>
                             <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                                <input class="mdl-textfield__input" type="text" id="IdPregunta">
+                                <input class="mdl-textfield__input" type="text" id="IdPregunta" name="idPregunta">
                                 <label class="mdl-textfield__label" for="IdPregunta">IdPregunta</label>
                             </div>
                             <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                                <input class="mdl-textfield__input" type="text" id="Voto">
+                                <input class="mdl-textfield__input" type="text" id="Voto" name="voto">
                                 <label class="mdl-textfield__label" for="Voto">Voto</label>
                             </div>							
                             <p>

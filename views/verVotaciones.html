@@ -14,7 +14,7 @@
     <script type="text/javascript" src="../public/js/functions.js"></script>
 	<script>
 		function verVotaciones(){
-			performAjax("formVerVotaciones", "api/verVotaciones", "GET", resVotaciones);
+			performAjax("formVerVotaciones", "/api/verVotaciones", "GET", resVotaciones);
 		}
 	</script>
 </head>
@@ -64,7 +64,7 @@
                         <form id="formVerVotaciones" name="formVerVotaciones" method="get">
 
                             <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                                <input class="mdl-textfield__input" type="text" id="Detallado">
+                                <input class="mdl-textfield__input" type="text" id="Detallado" name="detallado">
                                 <label class="mdl-textfield__label" for="Detallado">Detallado</label>
                             </div>					
                             <p>
