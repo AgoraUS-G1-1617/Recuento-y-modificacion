@@ -1,6 +1,6 @@
 .portfolio-header {
   position: relative;
-  background-image: url(/public/img/header-bg.jpg);
+  background-color:#D3D3D3;
 }
 
 .portfolio-header .mdl-layout__header-row {
@@ -14,29 +14,21 @@
   font-size: 14px;
   text-align: center;
   font-weight: 300;
+  width: 100%;
+  height: auto;
 }
 
-/* When the Navbar is big  */
+.mdl-layout__content{
+	flex: 1 0 auto;
+}
+
 .mdl-grid.portfolio-max-width {
   min-height: calc(100vh - 316px);
-}
-
-/* When the Navbar is small  */
-.mdl-grid.portfolio-max-width {
-  min-height: calc(100vh - 180px);
-}
-
-.is-compact .mdl-layout__title span {
-  display: none;
 }
 
 .portfolio-logo-row {
   width: 100%;
   height: auto;
-}
-
-.is-compact .portfolio-logo-row {
-  min-height: auto;
 }
 
 .portfolio-logo {
@@ -46,12 +38,6 @@
   margin: auto auto 10px;
 }
 
-.is-compact .portfolio-logo {
-  height: 50px;
-  width: 150px;
-  background-size: 150px 50px;
-  margin-top: 10px;
-}
 
 .portfolio-navigation-row {
   background-color: rgba(0, 0, 0, 0.08);
@@ -104,11 +90,13 @@
   background: rgba(0, 0, 0, 0.2);
 }
 
-img.image {
+.image {
   width: 100px;
   height: auto;
   display: block;
   margin: auto;
+  filter: grayscale(100%);
+	-webkit-filter: grayscale(100%);
   
 }
 .mdl-card__media{
@@ -138,12 +126,6 @@ img.image {
 
 .padding-top {
   padding: 10px 0 0;
-}
-
-.portfolio-share-btn {
-  position: relative;
-  float: right;
-  top: -4px;
 }
 
 .demo-card-event > .mdl-card__actions {
