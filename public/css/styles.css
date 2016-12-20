@@ -16,6 +16,16 @@
   font-weight: 300;
 }
 
+/* When the Navbar is big  */
+.mdl-grid.portfolio-max-width {
+  min-height: calc(100vh - 316px);
+}
+
+/* When the Navbar is small  */
+.mdl-grid.portfolio-max-width {
+  min-height: calc(100vh - 180px);
+}
+
 .is-compact .mdl-layout__title span {
   display: none;
 }
