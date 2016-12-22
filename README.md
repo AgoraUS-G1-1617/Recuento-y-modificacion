@@ -106,7 +106,7 @@ Las respuestas incluyen un campo *estado* que indica el código de estado HTTP a
     - **idVotacion**: Obligatorio. Identificador de la votación que se desea recontar.
 - Ejemplo de uso:
     - Petición: `(GET) http://URL_BASE/api/recontarVotacion?idVotacion=2`
-    - Respuesta: Aún por implementar
+    - Respuesta: ```{"estado":200,"preguntas":[{"id_pregunta":2,"texto_pregunta":"¿A qué políticos votaría Ud.?","opciones":[{"id_opcion":3,"texto_opcion":"Mariano Rajoy","votos":0},{"id_opcion":4,"texto_opcion":"Pdro Snchz","votos":0},{"id_opcion":5,"texto_opcion":"Pablo Iglesias","votos":0},{"id_opcion":6,"texto_opcion":"Albert Rivera","votos":1},{"id_opcion":7,"texto_opcion":"Alberto Garzón","votos":0},{"id_opcion":8,"texto_opcion":"Rosa Díez","votos":0},{"id_opcion":9,"texto_opcion":"Kodos","votos":1}]},{"id_pregunta":3,"texto_pregunta":"¿Es Ud. mayor de edad?","opciones":[{"id_opcion":10,"texto_opcion":"Sí","votos":0},{"id_opcion":11,"texto_opcion":"No","votos":1}]}]}```
     
 ### Consultar una votación
  - URL: `(GET) URL_BASE/api/verVotacion`
