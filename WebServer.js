@@ -2,6 +2,9 @@
 var bodyparser = require("body-parser");
 var authModule = require("./authModule.js");
 var crypto = require("./crypto.js");
+var dbManager = require("./database_manager.js");
+var modif = require("./modificationModule.js");
+var countModule = require("./countModule.js");
 var fs = require("fs");
 
 //Creamos una instancia del servidor
@@ -9,6 +12,7 @@ var server = express();
 const port = 80;
 
 const HTTP_OK = 200;
+const HTTP_CREATED = 201;
 const HTTP_BAD_REQ = 400;
 const HTTP_FORBIDDEN = 403;
 const HTTP_NOT_FOUND = 404;
@@ -39,6 +43,16 @@ if(pubKeyExists && !privKeyExists) {
 //else: existen las dos, todo OK
 
 ///////////////////////////////////////////////////////////////////////
+/////////////////////// COMPROBAR BASE DATOS //////////////////////////
+///////////////////////////////////////////////////////////////////////
+
+if(!fs.existsSync("db/database.db")) {
+	console.log("Base de datos no encontrada, creando una nueva...");
+	dbManager.createDB();
+	dbManager.populateDB();
+}
+
+///////////////////////////////////////////////////////////////////////
 /////////////////////   MÉTODOS DE LA API /////////////////////////////
 ///////////////////////////////////////////////////////////////////////
 
@@ -50,32 +64,14 @@ router.route("/api/recontarVotacion").get((request, response) => {
 			return;
 		}
 		
-		var token = request.query.token;
 		var idVotacion = request.query.idVotacion;
 		
-		//Hacer la petición al módulo que nos dé los votos de la encuesta y recontarlos
+		try {
+			response.status(HTTP_OK).json({estado: HTTP_OK, preguntas: countModule.recontarVotacion(idVotacion)});
+		} catch(err) {
+			response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: err});
+		}
 		
-		//Respuesta de prueba
-		response.json({
-			estado: HTTP_OK,
-			preguntas: [
-				{id_pregunta: 0,
-				 titulo: "¿A quién va a votar en las próximas elecciones?",
-				 opciones: [
-					{id_respuesta: 0, nombre: "Mariano Rajoy", votos: 10},
-					{id_respuesta: 1, nombre: "Pdro Snchz", votos: 9},
-					{id_respuesta: 2, nombre: "Pablo Iglesias", votos: 8},
-					{id_respuesta: 3, nombre: "Albert Rivera", votos: 7}
-				]},
-				
-				{id_pregunta: 1,
-				 titulo: "¿Eres mayor de edad?",
-				 opciones: [
-					{id_respuesta: 0, nombre: "Sí", votos: 40},
-					{id_respuesta: 1, nombre: "No", votos: 30}
-				]},
-			]
-		});	
 		
 	} catch(err) {
 		console.log(err);
@@ -84,16 +80,12 @@ router.route("/api/recontarVotacion").get((request, response) => {
 	
 }).all(display405error);
 
-router.route("/api/modificarVoto").post((request, response) => {
+
+router.route("/api/emitirVoto").post((request, response) => {
 	try {
 		
 		if(!request.body.token) {
 			response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "No se ha proporcionado el token"});
-			return;
-		}
-		
-		if(!request.body.idVotacion) {
-			response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "No se ha proporcionado el ID de la votacion"});
 			return;
 		}
 		
@@ -102,15 +94,25 @@ router.route("/api/modificarVoto").post((request, response) => {
 			return;
 		}
 		
-		if(!request.body.nuevoVoto) {
-			response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "No se ha proporcionado el nuevo voto"});
+		if(!request.body.voto) {
+			response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "No se ha proporcionado el voto"});
 			return;
 		}
+        
+        if(request.body.voto.length < 100) {
+            //Los votos están encriptados con RSA de 2048 bits por lo que es seguro asumir que si está encriptado será (bastante) mayor de 100 caracteres.
+            response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "El voto debe estar encriptado"});
+			return;
+        }
 		
 		var token = request.body.token;
-		var idVotacion = request.body.idVotacion;
 		var idPregunta = request.body.idPregunta;
-		var nuevoVoto = request.body.nuevoVoto;
+		var voto = request.body.voto;
+		
+		if(isNaN(idPregunta)) {
+			response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "El identificador de la pregunta no es válido"});
+			return;
+		}
 		
 		//Hacer todas las comprobaciones oportunas...
 		authModule.getCredentials(token).then(data => {
@@ -125,7 +127,12 @@ router.route("/api/modificarVoto").post((request, response) => {
 				}
 				
 				//El usuario tiene permisos en este punto.
-				response.json({estado: HTTP_OK, mensaje: "Voto modificado satisfactoriamente"});
+				try {
+					modif.addVote(idPregunta, {token_user: token, opcion: voto});
+					response.status(HTTP_CREATED).json({estado: HTTP_CREATED, mensaje: "Voto emitido con éxito"});
+				} catch(err) {
+					response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: err});
+				}
 			}
 		});
 		
@@ -135,7 +142,8 @@ router.route("/api/modificarVoto").post((request, response) => {
 	}
 }).all(display405error);
 
-router.route("/api/eliminarVoto").delete((request, response) => {
+
+router.route("/api/modificarVoto").post((request, response) => {
 	try {
 		
 		if(!request.body.token) {
@@ -143,8 +151,64 @@ router.route("/api/eliminarVoto").delete((request, response) => {
 			return;
 		}
 		
-		if(!request.body.idVotacion) {
-			response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "No se ha proporcionado el ID de la votacion"});
+		if(!request.body.idPregunta) {
+			response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "No se ha proporcionado el ID de la pregunta"});
+			return;
+		}
+		
+		if(!request.body.nuevoVoto) {
+			response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "No se ha proporcionado el nuevo voto"});
+			return;
+		}
+        
+        if(request.body.nuevoVoto.length < 100) {
+            //Los votos están encriptados con RSA de 2048 bits por lo que es seguro asumir que si está encriptado será (bastante) mayor de 100 caracteres.
+            response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "El voto debe estar encriptado"});
+			return;
+        }
+		
+		var token = request.body.token;
+		var idPregunta = request.body.idPregunta;
+		var nuevoVoto = request.body.nuevoVoto;
+		
+		if(isNaN(idPregunta)) {
+			response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "El identificador de la pregunta no es válido"});
+			return;
+		}
+		
+		//Hacer todas las comprobaciones oportunas...
+		authModule.getCredentials(token).then(data => {
+			
+			if(data === undefined) {
+				response.status(HTTP_FORBIDDEN).json({estado: HTTP_FORBIDDEN, mensaje: "El token no existe en el módulo de Autenticación ni en nuestra base de datos local"});
+				return;
+			} else {	
+				if(data.UserToken != token) {
+					response.status(HTTP_FORBIDDEN).json({estado: HTTP_FORBIDDEN, mensaje: "El token devuelto por la consulta no coincide con el proporcionado como parámetro"});
+					return;
+				}
+				
+				//El usuario tiene permisos en este punto.
+				try {
+					modif.changeVote(token, idPregunta, nuevoVoto);
+					response.status(HTTP_OK).json({estado: HTTP_OK, mensaje: "Voto modificado con éxito"});
+				} catch(err) {
+					response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: err});
+				}
+			}
+		});
+		
+	} catch(err) {
+		console.log(err);
+		response.status(HTTP_SERVER_ERR).json({estado: HTTP_SERVER_ERR, mensaje: "Error interno del servidor"});
+	}
+}).all(display405error);
+
+router.route("/api/eliminarVoto").post((request, response) => {
+	try {
+		
+		if(!request.body.token) {
+			response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "No se ha proporcionado el token"});
 			return;
 		}
 		
@@ -154,8 +218,12 @@ router.route("/api/eliminarVoto").delete((request, response) => {
 		}
 		
 		var token = request.body.token;
-		var idVotacion = request.body.idVotacion;
 		var idPregunta = request.body.idPregunta;
+		
+		if(isNaN(idPregunta)) {
+			response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "El identificador de la pregunta no es válido"});
+			return;
+		}
 		
 		//Hacer todas las comprobaciones y operaciones oportunas...
 		authModule.getCredentials(token).then(data => {
@@ -169,8 +237,18 @@ router.route("/api/eliminarVoto").delete((request, response) => {
 					return;
 				}
 				
+				if(isNaN(idPregunta)) {
+					response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "Los identificadores no son válidos"});
+					return;
+				}
+				
 				//El usuario tiene permisos en este punto.
-				response.json({estado: HTTP_OK, mensaje: "Voto eliminado satisfactoriamente"});
+				try {
+					modif.deleteVote(token, idPregunta);
+					response.status(HTTP_OK).json({estado: HTTP_OK, mensaje: "Voto eliminado con éxito"});
+				} catch(err) {
+					response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: err});
+				}
 			}
 		});
 		
@@ -191,6 +269,149 @@ router.route("/api/clavePublica").get((request, response) => {
 		response.status(HTTP_SERVER_ERR).json({estado: HTTP_SERVER_ERR, mensaje: "Error interno del servidor"});
 	}
 	
+}).all(display405error);
+
+router.route("/api/verVotaciones").get((request, response) => {
+    try {
+        
+        var detallado = request.query.detallado;
+        var encuestas_json = dbManager.getPolls(detallado);
+        response.status(HTTP_OK).json({estado: HTTP_OK, votaciones: encuestas_json});
+        
+    } catch(err) {
+        console.log(err);
+        response.status(HTTP_SERVER_ERR).json({estado: HTTP_SERVER_ERR, mensaje: "Error interno del servidor"});
+    }
+}).all(display405error);
+
+router.route("/api/verVotacion").get((request, response) => {
+    try {
+        
+        if(!request.query.idVotacion) {
+            response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "No se ha proporcionado el ID de la votacion"});
+			return;
+        }
+        
+        var idVotacion = request.query.idVotacion;
+        
+        if(isNaN(idVotacion)) {
+            response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: "El ID de la votacion no es un valor valido"});
+			return;
+        }
+        
+        var detallado = request.query.detallado;
+        var encuesta_json = dbManager.getPolls(detallado, idVotacion);
+        
+        if(encuesta_json.length == 0) {
+            response.status(HTTP_NOT_FOUND).json({estado: HTTP_NOT_FOUND, mensaje: "No existe ninguna votacion con esa ID"});
+			return;
+        }
+        
+        response.status(HTTP_OK).json({estado: HTTP_OK, votacion: encuesta_json[0]});
+        
+    } catch(err) {
+        console.log(err);
+        response.status(HTTP_SERVER_ERR).json({estado: HTTP_SERVER_ERR, mensaje: "Error interno del servidor"});
+    }
+}).all(display405error);
+
+router.route("/api/crearVotacion").post((request, response) => {
+	try {
+		
+		payload = request.body;
+		
+		// Comprobar los parámetros
+		if(!param_ok(payload.titulo)) {
+			error(HTTP_BAD_REQ, "La votación debe tener un parámetro 'titulo'", response);
+			return;
+		}
+		
+		if(!param_ok(payload.cp)) {
+			error(HTTP_BAD_REQ, "La votación debe tener un parámetro 'cp'", response);
+			return;
+		} 
+		
+		if(payload.cp.length != 5 || isNaN(payload.cp)) {
+			error(HTTP_BAD_REQ, "El parámetro 'cp' debe ser una cadena numérica de longitud 5", response);
+			return;
+		}
+		
+		if(!param_ok(payload.fecha_cierre)) {
+			error(HTTP_BAD_REQ, "La votación debe tener un parámetro 'fecha_cierre'", response);
+			return;
+		} 
+		
+		if(!/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/.test(payload.fecha_cierre)) {
+			error(HTTP_BAD_REQ, "La fecha de cierre debe tener formato YYYY-MM-DD HH:MM:SS", response);
+			return;
+		}
+		
+		var closeDate = Date.parse(payload.fecha_cierre);
+		if(isNaN(closeDate)) {
+			error(HTTP_BAD_REQ, "La fecha de cierre no es válida", response);
+			return;
+		}
+		
+		if(closeDate - (new Date()) < 0) {
+			error(HTTP_BAD_REQ, "La fecha de cierre debe estar en el futuro", response);
+			return;
+		}
+			
+		
+		if(payload.preguntas === undefined || !(payload.preguntas instanceof Array)) {
+			error(HTTP_BAD_REQ, "La votación debe tener un parámetro 'preguntas' que debe ser un array", response);
+			return;
+		}
+		
+		if(payload.preguntas.length == 0) {
+			error(HTTP_BAD_REQ, "El array de preguntas debe contener al menos una pregunta", response);
+			return;
+		}
+		
+		for(var i = 0; i < payload.preguntas.length; i++) {
+			var pregunta = payload.preguntas[i];
+			if(typeof pregunta != "object") {
+				error(HTTP_BAD_REQ, "El elemento número " + (i+1) + " del array de preguntas no es válido", response);
+				return;
+			}
+			
+			if(!param_ok(pregunta.texto_pregunta)) {
+				error(HTTP_BAD_REQ, "La pregunta número " + (i+1) + " debe contener un atributo 'texto_pregunta' válido.", response);
+				return;
+			}
+			
+			if(!param_ok(pregunta.multirespuesta) || typeof pregunta.multirespuesta != "boolean") {
+				error(HTTP_BAD_REQ, "La pregunta número " + (i+1) + " debe contener un atributo 'multirespuesta' de tipo boolean.", response);
+				return;
+			}
+			
+			if(pregunta.opciones === undefined || !(pregunta.opciones instanceof Array)) {
+				error(HTTP_BAD_REQ, "La pregunta número " + (i+1) + " debe contener un parámetro 'opciones' que debe ser un array", response);
+				return;
+			}
+		
+			if(pregunta.opciones.length == 0) {
+				error(HTTP_BAD_REQ, "El array del opciones de la pregunta número " + (i+1) + " debe contener al menos una opción", response);
+				return;
+			}
+			
+			for(var j = 0; j < pregunta.opciones.length; j++) {
+				if(typeof pregunta.opciones[j] != "string") {
+					error(HTTP_BAD_REQ, "La opción " + (j+1) + " de la pregunta " + (i+1) + " no es válida (debe ser un String)", response);
+					return;
+				}
+			}
+		}
+		
+		//Si hemos llegado hasta aquí está todo correcto, crear la votación
+		var idVotacionCreada = dbManager.createPoll(payload);
+		response.status(HTTP_CREATED).json({estado: HTTP_CREATED, mensaje: "Votación creada correctamente", id_votacion: idVotacionCreada});
+		
+		
+	} catch(err) {
+        console.log(err);
+        response.status(HTTP_SERVER_ERR).json({estado: HTTP_SERVER_ERR, mensaje: "Error interno del servidor"});
+    }
 }).all(display405error);
 
 ///////////////////////////////////////////////////////////////////////
@@ -223,4 +444,12 @@ function display405error(request, response) {
 
 function display404error(request, response) {
 	response.status(HTTP_NOT_FOUND).json({estado: HTTP_NOT_FOUND, mensaje: "Metodo no encontrado"});
+}
+
+function error(code, msg, response) {
+	response.status(code).json({estado: code, mensaje: msg}).end();
+}
+
+function param_ok(param) {
+	return param !== undefined && (typeof param != "string" || param.length > 0);
 }

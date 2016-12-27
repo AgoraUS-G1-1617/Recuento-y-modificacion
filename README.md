@@ -44,57 +44,100 @@ Los componentes se comunican internamente usando los métodos provistos para ell
 
 ### Códigos de estado HTTP
 - **200 (OK)**: Petición atendida con éxito
+- **201 (CREATED)**: Recurso creado con éxito
 - **400 (BAD REQUEST)**: No se ha proporcionado algún parámetro obligatorio o los parámetros no son válidos.
 - **403 (FORBIDDEN)**: El usuario identificado por el token no existe o no tiene permiso para realizar la operación.
-- **404 (NOT FOUND)**: El método de la API especificado no existe.
+- **404 (NOT FOUND)**: El método o el recurso especificado no existe.
 - **405 (METHOD NOT ALLOWED)**: El método existe pero el verbo HTTP usado no es el correcto.
 - **500 (INTERNAL SERVER ERROR)**: Errores no controlados en el servidor.
 
 ### Información adicional
 Las respuestas incluyen un campo *estado* que indica el código de estado HTTP asociado, para mayor comodidad. Opcionalmente, también pueden incluir un campo *mensaje* que proporciona información sobre la operación.
+    
+### Emitir un voto
+- URL: `(POST) URL_BASE/api/emitirVoto`
+- Parámetros:
+    - **token**: Obligatorio. Token de sesión del usuario que emite el voto.
+    - **idPregunta**: Obligatorio. Identificador de la pregunta en la que se desea votar.
+    - **voto**: Obligatorio. Identificador de la opción a votar, debe estar encriptado.
+- Ejemplo de uso:
+    - Petición: `(POST) http://URL_BASE/api/emitirVoto`
+	- Parámetros de la petición: 
+	```
+	token=test_123456
+	idPregunta=2
+	voto=<voto encriptado>
+	```
+    - Respuesta: `{"estado": 201,  "mensaje": "Voto emitido con éxito"}`
+    
+### Modificar votos
+- URL: `(POST) URL_BASE/api/modificarVoto`
+- Parámetros:
+    - **token**: Obligatorio. Token de sesión del usuario que solicita el cambio de su voto.
+    - **idPregunta**: Obligatorio. Identificador de la pregunta en la que se encuentra el voto a modificar.
+    - **nuevoVoto**: Obligatorio. Identificador de la nueva opción a votar, debe estar encriptado.
+- Ejemplo de uso:
+    - Petición: `(POST) http://URL_BASE/api/modificarVoto`
+	- Parámetros de la petición: 
+	```
+	token=test_123456
+	idPregunta=2
+	nuevoVoto=<voto encriptado>
+	```
+    - Respuesta: `{"estado": 200, "mensaje": "Voto modificado con éxito"}`
 
+### Eliminar votos
+- URL: `(POST) URL_BASE/api/eliminarVoto`
+- Parámetros:
+  - **token**: Obligatorio. Token de sesión del usuario que solicita la eliminación de su voto.
+  - **idPregunta**: Obligatorio. Identificador de la pregunta en la que se encuentra el voto a modificar.
+- Ejemplo de uso:
+    - Petición: `(DELETE) http://URL_BASE/api/eliminarVoto`
+	- Parámetros de la petición: 
+	```
+	token=test_123456
+	idPregunta=2
+	```
+    - Respuesta: `{"estado": 200,"mensaje": "Voto eliminado con éxito"}`
+    
 ### Recontar Votación
 - URL: `(GET) URL_BASE/api/recontarVotacion`
 - Parámetros:
     - **idVotacion**: Obligatorio. Identificador de la votación que se desea recontar.
 - Ejemplo de uso:
-    - Petición: `(GET) http://URL_BASE/api/recontarVotacion?idVotacion=288`
-    - Respuesta: 
-    `{"estado":200,"preguntas":[{"id_pregunta":0,"titulo":"¿A quién va a votar en las próximas elecciones?","opciones":[{"id_respuesta":0,"nombre":"Mariano Rajoy","votos":10},{"id_respuesta":1,"nombre":"Pdro Snchz","votos":9},{"id_respuesta":2,"nombre":"Pablo Iglesias","votos":8},{"id_respuesta":3,"nombre":"Albert Rivera","votos":7}]},{"id_pregunta":1,"titulo":"¿Eres mayor de edad?","opciones":[{"id_respuesta":0,"nombre":"Sí","votos":40},{"id_respuesta":1,"nombre":"No","votos":30}]}]}`
-
-### Modificar votos
-- URL: `(POST) URL_BASE/api/modificarVoto`
-- Parámetros:
-    - **token**: Obligatorio. Token de sesión del usuario que solicita el cambio de su voto.
-    - **idVotacion**: Obligatorio. Identificador de la votación en la que se encuentra el voto a modificar.
-	- **idPregunta**: Obligatorio. Identificador de la pregunta dentro de la votación en la que se encuentra el voto a modificar.
-    - **nuevoVoto**: Obligatorio. Identificador de la opción a votar.
-- Ejemplo de uso:
-    - Petición: `(POST) http://URL_BASE/api/modificarVoto`
-	- Cuerpo de la petición: 
-	```
-	token=AAA111
-	idVotacion=288
-	idPregunta=2
-	nuevoVoto=3
-	```
-    - Respuesta: `{"estado": 200,"mensaje": "Voto modificado satisfactoriamente"}`
-
-### Eliminar votos
-- URL: `(DELETE) URL_BASE/api/eliminarVoto`
-- Parámetros:
-  - **token**: Obligatorio. Token de sesión del usuario que solicita la eliminación de su voto.
-  - **idVotacion**: Obligatorio. Identificador de la votación en la que se encuentra el voto a eliminar.
-  - **idPregunta**: Obligatorio. Identificador de la pregunta dentro de la votación en la que se encuentra el voto a modificar.
-- Ejemplo de uso:
-    - Petición: `(DELETE) http://URL_BASE/api/eliminarVoto`
-	- Cuerpo de la petición: 
-	```
-	token=AAA111
-	idVotacion=288
-	idPregunta=2
-	```
-    - Respuesta: `{"estado": 200,"mensaje": "Voto eliminado satisfactoriamente"}`
+    - Petición: `(GET) http://URL_BASE/api/recontarVotacion?idVotacion=2`
+    - Respuesta: ```{"estado":200,"preguntas":[{"id_pregunta":2,"texto_pregunta":"¿A qué políticos votaría Ud.?","opciones":[{"id_opcion":3,"texto_opcion":"Mariano Rajoy","votos":0},{"id_opcion":4,"texto_opcion":"Pdro Snchz","votos":0},{"id_opcion":5,"texto_opcion":"Pablo Iglesias","votos":0},{"id_opcion":6,"texto_opcion":"Albert Rivera","votos":1},{"id_opcion":7,"texto_opcion":"Alberto Garzón","votos":0},{"id_opcion":8,"texto_opcion":"Rosa Díez","votos":0},{"id_opcion":9,"texto_opcion":"Kodos","votos":1}]},{"id_pregunta":3,"texto_pregunta":"¿Es Ud. mayor de edad?","opciones":[{"id_opcion":10,"texto_opcion":"Sí","votos":0},{"id_opcion":11,"texto_opcion":"No","votos":1}]}]}```
+    
+### Consultar una votación
+ - URL: `(GET) URL_BASE/api/verVotacion`
+ - Parámetros:
+    - **idVotacion**: Obligatorio. ID de la votación sobre la cual obtener información.
+    - **detallado**: Opcional. Si se incluye, añade a la información básica de la encuesta las preguntas de cada una y las opciones de cada pregunta. Puede tener cualquier valor.
+ - Ejemplo de uso:
+    - Petición: `(GET) http://URL_BASE/api/verVotacion?idVotacion=1&detallado=si`
+    - Respuesta: ```{"estado":200,"votacion":{"id_votacion":1,"titulo":"Votación definitiva sobre la tortilla de patatas","cp":"12345","fecha_creacion":"2016-12-12 20:39:41","fecha_cierre":"2017-01-11 20:39:41","preguntas":[{"id_pregunta":1,"texto_pregunta":"¿Prefiere Ud. la tortilla con o sin cebolla?","multirespuesta":"false","opciones":[{"id_opcion":1,"texto_opcion":"Sin cebolla, y además me gusta devorar gatitos indefensos."},{"id_opcion":2,"texto_opcion":"Con cebolla, y además rescato a los gatitos abandonados."}]}]}}```
+    
+### Consultar todas las votaciones
+ - URL: `(GET) URL_BASE/api/verVotaciones`
+ - Parámetros:
+    - **detallado**: Opcional. Si se incluye, añade a la información básica de la encuesta las preguntas de cada una y las opciones de cada pregunta. Puede tener cualquier valor.
+    
+ - Ejemplo de uso: El JSON tiene el mismo formato que el método anterior, salvo que devuelve un array de objetos de tipo Votación en lugar de uno solo.
+  
+### Crear una votación
+  - URL: `(POST) URL_BASE/api/crearVotacion`
+  - Parámetros: El cuerpo de la petición POST debe contener la representación JSON de la votación a crear tal y como se devuelve en los dos métodos anteriores, con un par de cambios: no es necesario incluir ID's (ya que lógicamente no tienen ninguno al estar creando una nueva) y las opciones deben ser simplemente un array de Strings.
+  - Ejemplo de uso:
+    - Cuerpo de la petición: ```{"titulo":"Votación definitiva sobre la tortilla de patatas","cp":"12345","fecha_cierre":"2017-12-12 13:37:00","preguntas":[{"texto_pregunta":"Pregunta 1","multirespuesta":false,"opciones":["Opción 1 pregunta 1","Opción 2 pregunta 1"]},{"texto_pregunta":"Pregunta 2","multirespuesta":false,"opciones":["Opción 2 pregunta 1","Opción 2 pregunta 2"]}]}```
+    - Respuesta:
+    ```
+    {
+    	"estado": 201,
+    	"mensaje": "Votación creada correctamente",
+    	"id_votacion": 3
+    }
+    ```
+    Devuelve también el ID asignado a la votación recién creada.
 
 ### Obtención de clave pública
 ####Devuelve la clave pública RSA para el encriptado de votos mediante el módulo de [Verificación](https://github.com/AgoraUS-G1-1617/Verification).
@@ -106,6 +149,9 @@ Las respuestas incluyen un campo *estado* que indica el código de estado HTTP a
 `
 
 **Nota:** El formato de la clave puede estar sujeto a cambios impuestos por el módulo de [Verificación](https://github.com/AgoraUS-G1-1617/Verification). En cualquier caso, el código que se desarrolle debe ser ajeno a este formato, limitándose a obtener la clave y pasarla a Verificación para el encriptado del dato.
+
+# Tokens de usuario
+Los tokens de usuario que se envíen se verificarán contra el módulo de Autenticación para comprobar su validez. Si este módulo no está disponible, se comprobará contra nuestra base local de tokens. Para mayor comodidad, se considerarán válidos todos los tokens que comiencen por "test_" para facilitar las pruebas.
 
 # Encriptado de votos
 Los votos emitidos en la cabina de votación deben ser encriptados antes de guardarse mediante el módulo de Almacenamiento, para que nadie sepa qué opción votó cada persona. Lógicamente, es el módulo de Recuento el que debe ser capaz de, llegado el momento de recontar una votación, desencriptar cada voto.

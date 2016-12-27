@@ -3,7 +3,10 @@ node_js:
   - "6"
   - "5"
   - "4"
+sudo: required
 install:
+  - sudo apt-get install oracle-java8-installer
   - npm install
 script:
   - npm test test/tests.js
+  - npm test test/testBD.js

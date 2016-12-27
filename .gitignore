@@ -38,3 +38,5 @@ jspm_packages
 
 # Clave privada RSA para desencriptar votos
 keypair/private.key
+
+db/database.db
