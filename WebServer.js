@@ -4,6 +4,7 @@ var authModule = require("./authModule.js");
 var crypto = require("./crypto.js");
 var dbManager = require("./database_manager.js");
 var modif = require("./modificationModule.js");
+var countModule = require("./countModule.js");
 var fs = require("fs");
 
 //Creamos una instancia del servidor
@@ -63,11 +64,13 @@ router.route("/api/recontarVotacion").get((request, response) => {
 			return;
 		}
 		
-		var token = request.query.token;
 		var idVotacion = request.query.idVotacion;
 		
-		//TODO
-		response.status(HTTP_OK).json({estado: HTTP_OK, mensaje: "Recuento de votos aún pendiente de implementación"});
+		try {
+			response.status(HTTP_OK).json({estado: HTTP_OK, preguntas: countModule.recontarVotacion(idVotacion)});
+		} catch(err) {
+			response.status(HTTP_BAD_REQ).json({estado: HTTP_BAD_REQ, mensaje: err});
+		}
 		
 		
 	} catch(err) {

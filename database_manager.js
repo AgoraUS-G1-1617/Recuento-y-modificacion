@@ -138,6 +138,14 @@ function getOpcionesPregunta(idPregunta) {
 	return opciones;
 }
 
+function getVotosPregunta(idPregunta) {
+    command = "SELECT opcion FROM votos WHERE id_pregunta = ?";
+    connect();
+    var votos = db.run(command, [idPregunta]);
+    db.close();
+    return votos;
+}
+
 function getPolls(detailed, pollId) {
 	//Si detailed es true, devolver toda la información (incluyendo preguntas y opciones)
 	//Si no, sólo la información básica de la encuesta
@@ -154,6 +162,10 @@ function getPolls(detailed, pollId) {
     }
 	
 	db.close();
+    
+    if(votaciones.length == 0) {
+        return undefined;
+    }
 	
 	if(detailed) {
 		for(var i = 0; i < votaciones.length; i++) {
@@ -263,3 +275,4 @@ exports.getVoteByUserAndPregunta = getVoteByUserAndPregunta;
 exports.deleteVote = deleteVote;
 exports.updateVote = updateVote;
 exports.createPoll = createPoll;
+exports.getVotosPregunta = getVotosPregunta;
