@@ -9,7 +9,7 @@ var fs = require("fs");
 
 //Creamos una instancia del servidor
 var server = express();
-const port = 80;
+const port = process.env.TRAVIS ? 8080 : 80; //Si estamos haciendo testing en Travis, no se puede usar el puerto 80 (requiere sudo y no es adecuado ejecutar un servidor con sudo)
 
 const HTTP_OK = 200;
 const HTTP_CREATED = 201;
