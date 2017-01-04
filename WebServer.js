@@ -302,7 +302,7 @@ router.route("/api/verVotacion").get((request, response) => {
         var detallado = request.query.detallado;
         var encuesta_json = dbManager.getPolls(detallado, idVotacion);
         
-        if(encuesta_json.length == 0) {
+        if(encuesta_json === undefined) {
             response.status(HTTP_NOT_FOUND).json({estado: HTTP_NOT_FOUND, mensaje: "No existe ninguna votacion con esa ID"});
 			return;
         }
