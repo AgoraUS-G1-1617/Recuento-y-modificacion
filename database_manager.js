@@ -105,7 +105,7 @@ function createPoll(data) {
 		var opciones = pregunta.opciones;
 		
 		for(var j = 0; j < pregunta.opciones.length; j++) {
-			db.insert("opciones", { texto_opcion: opciones[i], id_pregunta: idPregunta });
+			db.insert("opciones", { texto_opcion: opciones[j], id_pregunta: idPregunta });
 		}
 	}
 	
