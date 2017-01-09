@@ -43,14 +43,14 @@ var checkSurvey = function(pollId){
 		throw "No existe ninguna encuesta con el ID introducido";
 	}else{
 
-		if(new Date(poll.fecha_cierre) > now){
+		if(new Date(poll.fecha_cierre) > new Date()){
 			
 			surveyState = true;
 
 		}else{
 			surveyState = false;
-		};
-	};
+		}
+	}
 		
 	return surveyState;
 };
