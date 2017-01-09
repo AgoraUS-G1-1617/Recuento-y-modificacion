@@ -116,7 +116,7 @@ function createPoll(data) {
 
 function addVote(tokenUser, idPregunta, voto) {
 	connect();
-	var idNewVote = db.insert("votos", { token_user: tokenUser, id_pregunta: idPregunta, opcion: voto });
+	var idNewVote = db.insert("votos", { token_user: tokenUser, id_pregunta: idPregunta, opcion: voto.replace(/(\r\n|\n|\r)/gm,"") });
 	console.log(idNewVote)
 	db.close();
 	return idNewVote;
