@@ -60,10 +60,11 @@ function populateDB() {
 
 	var now = new Date();
 	var futureDate = formatDate(new Date(now.getTime() + 30 * 24 * 3600 * 1000)); //1 mes en el futuro
+    var pastDate = formatDate(new Date(now.getTime() - 30 * 24 * 3600 * 1000)); //1 mes en el futuro
 	now = formatDate(now);
 	
 	var idVotacionTortilla = db.insert("votaciones", { titulo: "Votación definitiva sobre la tortilla de patatas", fecha_creacion: now, fecha_cierre: futureDate, cp: "41008" });
-	var idVotacionElecciones = db.insert("votaciones", { titulo: "Encuesta sobre intención de voto", fecha_creacion: now, fecha_cierre: futureDate, cp: "01337" });
+	var idVotacionElecciones = db.insert("votaciones", { titulo: "Encuesta sobre intención de voto", fecha_creacion: now, fecha_cierre: pastDate, cp: "01337" });
 	
 	var idPregunta1Tortilla = db.insert("preguntas", { texto_pregunta: "¿Prefiere Ud. la tortilla con o sin cebolla?", multirespuesta: false, id_votacion: idVotacionTortilla});
 	var idPregunta1Elecciones = db.insert("preguntas", { texto_pregunta: "¿A qué políticos votaría Ud.?", multirespuesta: true, id_votacion: idVotacionElecciones });
