@@ -43,25 +43,25 @@ function getCredentials(userToken){
 function checkOnlineCredentials(userToken, callback) {
     
     if(userToken.startsWith("test_")) {
-        callback({"UserToken":userToken, "UserRole":"Admin", "_id":"1337"});
+        callback({"UserToken":userToken, "valid":true});
     }
     
-    var url="www.npmjs.com";
-    var method = "/login";
-    var urlPort = 80;
+    var url="authb.agoraus1.egc.duckdns.org";
+    var method = "/api/index.php?method=checkToken&token=" + userToken;
     var agentOptions = new http.Agent({ keepAlive: true });
     var headersOptions = { 'Content-Type': 'application/json' }
+    var localData = undefined;
 
     var localData = user.findOne({UserToken: userToken}).then(function(data){
+        if(data!=undefined){
+            data = {'UserToken':userToken, "valid":true}
+        }
         return data;
     });
 
-    http.get({
+    https.get({
         host: url,
-        path: method, 
-        port: urlPort, 
-        agent: agentOptions, 
-        headers: headersOptions
+        path: method
 
     }, function(response) {
         var body = '';
@@ -76,14 +76,17 @@ function checkOnlineCredentials(userToken, callback) {
 
         response.on('end', function() {
             try{
-                var parsed = JSON.parse(body);
+                var parsed = JSON.parse(body.trim());
 
-                if(parsed.hasOwnProperty('UserToken') 
-                    && parsed.hasOwnProperty('UserRole')){
-                    callback({
-                        UserToken: parsed.UserToken,
-                        UserRole: parsed.UserRole
-                    });
+                if(parsed.hasOwnProperty('valid')){
+                    if(parsed.valid==false){
+                        callback(localData);
+                    } else {
+                        callback({
+                            UserToken: userToken,
+                            valid: parsed.valid
+                        });    
+                    }
                 } else {
                     callback(localData);
                 }
