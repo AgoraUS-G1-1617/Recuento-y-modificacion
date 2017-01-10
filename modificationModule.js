@@ -312,9 +312,9 @@ var changeVoteTestNegative = function(){
 //Test: eliminar voto
 var deleteVoteTestPositive = function(){
 	
-	var userToken = "BBB222";
-	var preguntaId = 2;
-	var voto = {token_user: "AAA111", id_pregunta: 2, opcion: crypto.encrypt("prueba") };
+	var userToken = "AAA111";
+	var preguntaId = 1;
+	var voto = {token_user: "AAA111", id_pregunta: 1, opcion: crypto.encrypt("prueba") };
 	return deleteVote(userToken, preguntaId);
 };
 
