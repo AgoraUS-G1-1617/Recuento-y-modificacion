@@ -160,4 +160,4 @@ En caso de que aún no exista, en el arranque se genera un par de claves RSA y s
 
 Nótese que la pérdida de la clave privada provocaría que se deba generar un par de claves nuevo y todos los votos que se hayan encriptado con la clave pública anterior serían irrecuperables.
 
-Las tareas de encriptado, desencriptado y generación de claves las realiza el módulo de [Verificación](https://github.com/AgoraUS-G1-1617/Verification), integrado en el nuestro en forma de .jar que usamos por línea de comandos.
+Las tareas de encriptado, desencriptado y generación de claves las realiza el módulo de [Verificación](https://github.com/AgoraUS-G1-1617/Verification), integrado en el nuestro en forma de .jar que usamos por línea de comandos. La versión que empleamos es la que se encuentra en nuestro repositorio. Existe una versión más reciente que emplea Base64 para codificar los datos, pero hemos decidido mantener la versión anterior por compatibilidad con el resto de subsistemas que se integran con nosotros.
