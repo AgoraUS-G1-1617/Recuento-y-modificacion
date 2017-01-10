@@ -281,8 +281,8 @@ var checkSurveyTestNegative = function(){
 
 //Test: añadir voto
 var addVoteTest = function(){
-	var userToken = "AAA111";
-	var idPregunta = 2;
+	var userToken = "test_123456";
+	var idPregunta = 1;
 	var voto = { token_user: userToken, id_pregunta: idPregunta, opcion: crypto.encrypt("prueba") };
 	
 	return addVote(idPregunta, voto);
@@ -292,8 +292,8 @@ var addVoteTest = function(){
 //Test: cambiar voto
 var changeVoteTestPositive = function(){
 	
-	var userToken = "BBB222";
-	var preguntaId = 2;
+	var userToken = "AAA111";
+	var preguntaId = 1;
 	var options = database.getOpcionesPregunta(preguntaId);
 	
 	return changeVote(userToken, preguntaId, options);
