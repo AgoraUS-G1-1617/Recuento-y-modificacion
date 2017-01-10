@@ -42,16 +42,6 @@ function recontarVotacion(idVotacion) {
     return resultados;
 }
 
-function idEnOpciones(id, opciones) {
-    for(var i = 0; i < opciones.length; i++) {
-        if(opciones[i].id_opcion === id) {
-            return opciones[i];
-        }
-    }
-    
-    return false;
-}
-
 function desencriptarVotos(votos) {
     var res = [];
     for(var i = 0; i < votos.length; i++) {
