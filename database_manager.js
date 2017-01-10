@@ -60,7 +60,7 @@ function populateDB() {
 
 	var now = new Date();
 	var futureDate = formatDate(new Date(now.getTime() + 30 * 24 * 3600 * 1000)); //1 mes en el futuro
-    var pastDate = formatDate(new Date(now.getTime() - 30 * 24 * 3600 * 1000)); //1 mes en el futuro
+    var pastDate = formatDate(new Date(now.getTime() - 30 * 24 * 3600 * 1000)); //1 mes en el pasado
 	now = formatDate(now);
 	
 	var idVotacionTortilla = db.insert("votaciones", { titulo: "Votación definitiva sobre la tortilla de patatas", fecha_creacion: now, fecha_cierre: futureDate, cp: "41008" });
