@@ -40,8 +40,12 @@ function decrypt(data) {
     
     var privKey = fs.readFileSync("keypair/private.key", "utf-8");
     var command = "java -jar verification.jar decipher \"" + data.replace(/(\r\n|\n|\r)/gm,"") + "\" \"" + privKey + "\"";
+    try {
+        return exec(command, {encoding: "utf8"}).trim();
+    } catch(e) {
+        return 0;
+    }
     
-    return exec(command, {encoding: "utf8"}).trim();
 }
 
 exports.generateKeypair = generateKeypair;
