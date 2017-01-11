@@ -175,6 +175,16 @@ describe("Tests de la API", function() {
     
     });
 
+    // ADICIÓN PARA DEFENSA DE EGC
+    describe("Recuento de votacion(es)", function() {
+        it("Consultar una votación que no tenga más de N elementos", function() {
+            expect(() => {
+                var res = req2obj("/api/recontarVotacion?idVotacion=2", "GET");
+                expect(res.estado).to.equal(400);
+            }).to.not.throw("");
+        });
+    });
+
     describe("Modificar votos", function() {
         
         it("Modificación correcta de voto", function() {
