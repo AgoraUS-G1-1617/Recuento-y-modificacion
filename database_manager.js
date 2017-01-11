@@ -147,6 +147,14 @@ function getVotosPregunta(idPregunta) {
     return votos;
 }
 
+function getCantidadVotos(idVotacion) {
+	command = "SELECT count(*) FROM votos WHERE id_pregunta IN (SELECT id FROM preguntas WHERE id_votacion = ?)";
+	connect();
+	var votos = db.run(command, [idVotacion]);
+	db.close();
+	return votos[0]['count(*)'];
+}
+
 function getPolls(detailed, pollId) {
 	//Si detailed es true, devolver toda la información (incluyendo preguntas y opciones)
 	//Si no, sólo la información básica de la encuesta
@@ -277,3 +285,4 @@ exports.deleteVote = deleteVote;
 exports.updateVote = updateVote;
 exports.createPoll = createPoll;
 exports.getVotosPregunta = getVotosPregunta;
+exports.getCantidadVotos = getCantidadVotos;

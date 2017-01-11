@@ -14,6 +14,13 @@ function recontarVotacion(idVotacion) {
     if(new Date(votacion.fecha_cierre) > now) {
         throw "No se puede recontar esta votación ya que aún no ha terminado";
     }
+
+    var numVotos = dbManager.getCantidadVotos(idVotacion);
+    console.log(numVotos);
+
+    if(numVotos < 5) {
+        throw "La votación no se puede recontar porque tiene menos de 5 votos (" + numVotos + ")";
+    }
     
     var resultados = [];
     
