@@ -6,7 +6,7 @@ node_js:
   - "node"
 sudo: required
 install:
-  - sudo apt-get install oracle-java8-installer
+  - sudo apt-get install openjdk-8-jdk
   - npm install
 script:
   - npm test test/tests.js
